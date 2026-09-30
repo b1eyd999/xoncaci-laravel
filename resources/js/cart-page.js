@@ -1,10 +1,9 @@
 import { cart, money, post } from './cart.js';
-import { thumbnail } from './thumbs.js';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
-const MODES = { ours: 'Hazır dolduruş', custom: 'Öz seçimim', empty: 'Boş — özüm dolduracağam' };
+const MODES = { ours: 'Ustalarımızın dolduruşu', custom: 'Öz seçimim', empty: 'Boş xonça' };
 
 export function initCartPage() {
     const root = $('[data-cart-page]');
@@ -23,47 +22,37 @@ export function initCartPage() {
         if (!lines.length) return;
 
         list.innerHTML = lines.map((l, i) => {
-            const fill = (l.mode === 'custom' ? l.fill : l.cfg?.fill || []).map((f) => `${items[f.id]?.name || '?'} × ${f.qty}`).join(', ');
+            const shown = l.mode === 'custom' ? l.fill : l.shownFill || [];
+            const fill = shown.map((f) => `${items[f.id]?.name || '?'} × ${f.qty}`).join(', ');
             const q = quote?.lines?.[i];
             const price = q ? q.price + q.fill_total : l.estimate;
+            const taken = q && q.free !== null && q.free !== undefined && lines.slice(0, i + 1).filter((x) => x.xonca_id === l.xonca_id).length > q.free;
             const warn = q && q.free !== null && q.free !== undefined
-                ? (lines.slice(0, i + 1).filter((x) => x.xonca_id === l.xonca_id).length > q.free
-                    ? '<div class="mt-2 rounded-lg bg-red-50 px-2.5 py-1.5 text-xs font-semibold text-red-700">Bu tarixə boş deyil</div>'
-                    : '<div class="mt-2 text-xs font-semibold text-emerald-700">✓ Tarixə boşdur</div>')
+                ? `<div class="caps mt-3 !text-[9px] ${taken ? 'text-wine' : 'text-gold-deep'}">${taken ? 'Bu tarixə boş deyil' : 'Tarixə boşdur'}</div>`
                 : '';
-            return `<li class="card flex gap-3 p-3 sm:gap-4 sm:p-4">
-                <a href="/xonca/${l.slug}?edit=${l.uid}" class="stage relative size-24 shrink-0 overflow-hidden rounded-2xl sm:size-28">
-                    <img data-line-thumb="${i}" alt="" class="absolute inset-0 size-full object-contain opacity-0 transition">
-                </a>
+            const pic = l.photo
+                ? `<img src="${l.photo}" alt="" class="size-full object-cover">`
+                : `<span class="grid size-full place-items-center bg-sand text-gold"><svg viewBox="0 0 48 48" class="w-3/5" fill="none" stroke="currentColor" stroke-width=".8" stroke-linecap="round"><path d="M8 34c0-12 7-22 16-22s16 10 16 22"/><ellipse cx="24" cy="35" rx="18" ry="4"/><path d="M24 12c-2-3-6-3-5-1s3 1 5 1c2-3 6-3 5-1s-3 1-5 1"/><path d="M14 39l-1 2m22-2l1 2"/></svg></span>`;
+            return `<li class="flex gap-5 border-b border-ink/10 py-7 first:pt-0">
+                <a href="/xonca/${l.slug}?edit=${l.uid}" class="block h-32 w-26 shrink-0 overflow-hidden sm:h-36 sm:w-28">${pic}</a>
                 <div class="min-w-0 flex-1">
-                    <div class="flex items-start justify-between gap-2">
-                        <a href="/xonca/${l.slug}?edit=${l.uid}" class="font-display text-lg leading-tight font-semibold hover:text-wine-700">${l.name}</a>
-                        <div class="font-bold whitespace-nowrap text-wine-700">${money(price)}</div>
+                    <div class="flex items-start justify-between gap-4">
+                        <a href="/xonca/${l.slug}?edit=${l.uid}" class="font-display text-2xl leading-tight hover:text-gold-deep">${l.name}</a>
+                        <div class="font-display text-xl whitespace-nowrap">${money(price)}</div>
                     </div>
-                    <div class="mt-1 flex items-center gap-1.5 text-xs text-ink/55">
-                        <span class="inline-block size-3 rounded-full ring-1 ring-black/10" style="background:${l.ribbon}"></span> ${MODES[l.mode]}
+                    <div class="caps mt-2 flex items-center gap-2 !text-[9px] text-taupe">
+                        <span class="inline-block size-2.5 rounded-full ring-1 ring-black/10" style="background:${l.ribbon}"></span> ${MODES[l.mode]}
                     </div>
-                    ${fill ? `<div class="mt-1 line-clamp-2 text-xs text-ink/50">${fill}</div>` : ''}
+                    ${fill ? `<div class="mt-2 line-clamp-2 text-sm text-mist">${fill}</div>` : ''}
                     ${warn}
-                    <div class="mt-2 flex gap-4 text-xs font-bold">
-                        <a href="/xonca/${l.slug}?edit=${l.uid}" class="text-wine-600 hover:underline">Dəyiş</a>
-                        <button type="button" data-dup="${l.uid}" class="text-ink/60 hover:underline">+ Eynisindən</button>
-                        <button type="button" data-del="${l.uid}" class="text-ink/40 hover:text-red-600">Sil</button>
+                    <div class="mt-4 flex gap-6">
+                        <a href="/xonca/${l.slug}?edit=${l.uid}" class="link-line !text-[9px]">Dəyiş</a>
+                        <button type="button" data-dup="${l.uid}" class="link-line !text-[9px] text-taupe">Eynisindən</button>
+                        <button type="button" data-del="${l.uid}" class="link-line !text-[9px] text-mist">Sil</button>
                     </div>
                 </div>
             </li>`;
         }).join('');
-
-        lines.forEach((l, i) => {
-            if (!l.cfg) return;
-            thumbnail(l.cfg, items).then((url) => {
-                const img = $(`[data-line-thumb="${i}"]`, list);
-                if (img) {
-                    img.src = url;
-                    img.classList.remove('opacity-0');
-                }
-            });
-        });
     }
 
     list.addEventListener('click', (e) => {
@@ -95,7 +84,7 @@ export function initCartPage() {
         if (deliveryType() === 'delivery' && X.freeDeliveryFrom > 0) {
             free.classList.remove('hidden');
             free.textContent = sub >= X.freeDeliveryFrom
-                ? '🎉 Çatdırılma pulsuzdur!'
+                ? 'Çatdırılma pulsuzdur.'
                 : `Daha ${money(X.freeDeliveryFrom - sub)} — çatdırılma pulsuz olacaq`;
         } else {
             free.classList.add('hidden');
@@ -105,8 +94,8 @@ export function initCartPage() {
             const lines = cart.lines();
             const bad = data.lines.some((q, i) => q.free !== null && lines.slice(0, i + 1).filter((x) => x.xonca_id === lines[i].xonca_id).length > q.free);
             availNote.classList.remove('hidden');
-            availNote.className = `mt-3 text-sm font-semibold ${bad ? 'text-red-600' : 'text-emerald-700'}`;
-            availNote.textContent = bad ? 'Bəzi xonçalar bu tarixə boş deyil — onları dəyişin və ya başqa tarix seçin.' : '✓ Bütün xonçalar bu tarixə boşdur';
+            availNote.className = `mt-4 text-sm ${bad ? 'text-wine' : 'text-gold-deep'}`;
+            availNote.textContent = bad ? 'Bəzi xonçalar bu tarixə boş deyil — onları dəyişin və ya başqa tarix seçin.' : 'Bütün xonçalar bu tarixə boşdur.';
         }
         render();
     }
@@ -144,7 +133,7 @@ export function initCartPage() {
         const box = $('[data-errors]', form);
         const btn = form.querySelector('[type=submit]');
         box.classList.add('hidden');
-        $$('.input', form).forEach((i) => i.classList.remove('!border-red-400'));
+        $$('.field', form).forEach((i) => i.classList.remove('!border-wine'));
         btn.disabled = true;
         btn.textContent = 'Göndərilir…';
         const body = Object.fromEntries(new FormData(form).entries());
@@ -163,8 +152,8 @@ export function initCartPage() {
         btn.disabled = false;
         btn.textContent = 'Sifarişi göndər';
         const errors = data.errors || { _: [status === 429 ? 'Çox tez-tez cəhd edirsiniz, bir dəqiqə gözləyin.' : 'Xəta baş verdi, yenidən cəhd edin.'] };
-        Object.keys(errors).forEach((k) => form.elements[k]?.classList?.add('!border-red-400'));
-        box.innerHTML = Object.values(errors).flat().map((m) => `<div>• ${m}</div>`).join('');
+        Object.keys(errors).forEach((k) => form.elements[k]?.classList?.add('!border-wine'));
+        box.innerHTML = Object.values(errors).flat().map((m) => `<div>${m}</div>`).join('');
         box.classList.remove('hidden');
         box.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });

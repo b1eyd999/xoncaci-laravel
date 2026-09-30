@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Storage;
 
 class FillItem extends Model
 {
-    /** The 3D shapes the viewer knows how to draw (resources/js/xonca3d/items.js). */
+    /** The line drawings an item can be shown with (App\Support\Icons). */
     public const MODELS = [
         'kelle_qend' => 'Kəllə qənd',
         'candle' => 'Şam',
@@ -71,6 +71,7 @@ class FillItem extends Model
             'category' => $this->fill_category_id,
             'image' => $this->imageUrl(),
             'description' => $this->description,
+            'icon' => \App\Support\Icons::svg($this->model, 'size-6'),
         ];
     }
 }

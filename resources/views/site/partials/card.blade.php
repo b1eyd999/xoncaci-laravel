@@ -1,33 +1,23 @@
-@php($photo = $xonca->imageUrls()[0] ?? null)
-<a href="{{ route('xonca', $xonca) }}" class="card group reveal relative flex flex-col overflow-hidden transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_60px_-20px_rgba(90,16,27,0.35)]">
-    <div class="stage relative aspect-[4/3.4] overflow-hidden">
-        @if ($photo)
-            <img src="{{ $photo }}" alt="{{ $xonca->name }}" loading="lazy" class="absolute inset-0 size-full object-cover transition duration-700 group-hover:scale-105">
-        @else
-            <div class="shimmer absolute inset-0" data-thumb-skeleton></div>
-            <img data-thumb='@json($xonca->toViewer())' alt="{{ $xonca->name }} — 3D görünüş" class="absolute inset-0 size-full object-contain opacity-0 transition duration-700 group-hover:scale-105">
-        @endif
-        <div class="absolute top-3 left-3 flex flex-wrap gap-1.5">
-            @if ($xonca->is_featured)
-                <span class="rounded-full bg-wine-600 px-2.5 py-1 text-[11px] font-bold text-white">Seçilmiş</span>
+@php($photos = $xonca->images ?? [])
+<a href="{{ route('xonca', $xonca) }}" class="img-zoom reveal group block">
+    <div class="relative aspect-[4/5] overflow-hidden bg-sand">
+        @if ($photos)
+            <img src="{{ \App\Support\Img::url($photos[0], 900) }}" alt="{{ $xonca->name }}" loading="lazy" class="absolute inset-0 size-full object-cover">
+            @if (isset($photos[1]))
+                <img src="{{ \App\Support\Img::url($photos[1], 900) }}" alt="" loading="lazy" class="absolute inset-0 size-full object-cover opacity-0 transition-opacity duration-700 group-hover:opacity-100">
             @endif
-            <span class="rounded-full bg-white/85 px-2.5 py-1 text-[11px] font-bold text-wine-700 backdrop-blur">3D</span>
-        </div>
-        <span class="absolute right-3 bottom-3 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-ink/70 backdrop-blur">{{ \App\Models\Xonca::SHAPES[$xonca->shape] ?? '' }} · {{ $xonca->size_cm }} sm</span>
+        @else
+            <x-tray-art :xonca="$xonca" class="transition-transform duration-[1600ms] group-hover:scale-[1.03]" />
+        @endif
+        <span class="caps absolute inset-x-0 bottom-0 translate-y-full bg-onyx/85 py-4 text-center text-ivory transition-transform duration-500 group-hover:translate-y-0">Ətraflı</span>
     </div>
-    <div class="flex flex-1 flex-col p-5">
-        <div class="flex items-start justify-between gap-3">
-            <h3 class="font-display text-xl font-semibold text-ink">{{ $xonca->name }}</h3>
-            <div class="text-right">
-                <div class="text-lg font-extrabold whitespace-nowrap text-wine-700">{{ \App\Support\Money::format($xonca->price) }}</div>
-                <div class="text-[11px] text-ink/45">icarə</div>
-            </div>
+    <div class="mt-6 flex items-start justify-between gap-4">
+        <div>
+            <div class="caps !text-[10px] text-gold-deep">{{ $xonca->occasions->pluck('name')->take(2)->implode(' · ') ?: \App\Models\Xonca::STYLES[$xonca->style] ?? '' }}</div>
+            <h3 class="mt-2 font-display text-[1.7rem] leading-tight text-ink">{{ $xonca->name }}</h3>
         </div>
-        <p class="mt-1.5 line-clamp-2 text-sm text-ink/60">{{ $xonca->short_description }}</p>
-        <div class="mt-auto flex flex-wrap gap-1.5 pt-4">
-            @foreach ($xonca->occasions as $o)
-                <span class="rounded-full px-2.5 py-0.5 text-[11px] font-bold" style="background: {{ $o->accent }}14; color: {{ $o->accent }}">{{ $o->name }}</span>
-            @endforeach
+        <div class="shrink-0 pt-5 text-right">
+            <div class="font-display text-xl text-ink">{{ \App\Support\Money::format($xonca->price) }}</div>
         </div>
     </div>
 </a>

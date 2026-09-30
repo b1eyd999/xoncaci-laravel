@@ -1,10 +1,17 @@
 @extends('layouts.site', ['title' => $xonca->name, 'description' => $xonca->short_description])
+@php
+    use App\Support\Img;
+    use App\Support\Money;
+    $photos = $xonca->images ?? [];
+    $ours = $xonca->defaultFills->filter(fn ($f) => $f->item && $f->item->is_active);
+    $oursTotal = $ours->sum(fn ($f) => $f->item->price * $f->qty);
+@endphp
 
 @push('head')
     <script>
         window.XONCA = Object.assign(window.XONCA || {}, {
             items: @json($items),
-            xonca: @json($xonca->toViewer()),
+            xonca: @json($xonca->toViewer() + ['photo' => $photos ? Img::url($photos[0], 600) : null]),
             busy: @json($busy),
             earliest: @json($earliest),
         });
@@ -12,137 +19,159 @@
 @endpush
 
 @section('content')
-    <div data-builder class="container-x pt-4 pb-32 lg:pt-8 lg:pb-16">
-        <nav class="mb-4 hidden text-sm text-ink/50 sm:block">
-            <a href="{{ route('home') }}" class="hover:text-wine-700">Ana səhifə</a> /
-            <a href="{{ route('catalog') }}" class="hover:text-wine-700">Xonçalar</a> /
-            <span class="text-ink/70">{{ $xonca->name }}</span>
-        </nav>
+    <div data-builder class="bg-ivory pb-36 lg:pb-32">
+        <div class="container-x pt-8 lg:pt-12">
+            <nav class="caps !text-[10px] text-mist">
+                <a href="{{ route('home') }}" class="hover:text-ink">Ana səhifə</a> <span class="mx-2">/</span>
+                <a href="{{ route('catalog') }}" class="hover:text-ink">Kolleksiya</a> <span class="mx-2">/</span>
+                <span class="text-taupe">{{ $xonca->name }}</span>
+            </nav>
+        </div>
 
-        <div class="grid gap-6 lg:grid-cols-[1.2fr_1fr] lg:gap-10">
-            {{-- 3D STAGE --}}
-            {{-- On a phone the xonça stays pinned on top while the filling is chosen below it. --}}
-            <div class="sticky top-16 z-20 -mx-4 sm:top-20 sm:mx-0 lg:top-24 lg:self-start">
-                <div class="stage relative overflow-hidden shadow-[0_12px_30px_-18px_rgba(90,16,27,.4)] sm:rounded-[2rem] sm:ring-1 sm:ring-wine-900/5 lg:shadow-none">
-                    <div class="h-[40vh] w-full sm:h-[48vh] lg:aspect-square lg:h-auto lg:max-h-[calc(100vh-8rem)]" data-viewer></div>
-                    <div class="absolute top-3 left-3 flex gap-2">
-                        <button type="button" data-toggle-cover class="chip !bg-white/85 !py-1.5 text-xs backdrop-blur">Örtüyü gizlət</button>
-                        <button type="button" data-reset-view class="chip !bg-white/85 !py-1.5 text-xs backdrop-blur" aria-label="Görünüşü sıfırla">↺</button>
-                    </div>
-                    <button type="button" data-fullscreen class="chip absolute top-3 right-3 !bg-white/85 !py-1.5 text-xs backdrop-blur" aria-label="Tam ekran">⤢</button>
-                    <div class="pointer-events-none absolute inset-x-0 bottom-2 hidden text-center text-xs font-semibold text-ink/40 sm:block">Barmaqla fırladın · iki barmaqla yaxınlaşdırın</div>
+        <div class="container-x mt-8 grid gap-12 lg:mt-12 lg:grid-cols-[1.15fr_1fr] lg:gap-20 xl:gap-28">
+            {{-- GALLERY --}}
+            <div class="lg:sticky lg:top-32 lg:self-start">
+                <div class="relative -mx-5 aspect-[4/5] overflow-hidden bg-sand sm:mx-0" data-gallery-main>
+                    @if ($photos)
+                        @foreach ($photos as $p)
+                            <img src="{{ Img::url($p, 1400) }}" alt="{{ $xonca->name }}" data-gallery-slide="{{ $loop->index }}" class="absolute inset-0 size-full object-cover transition-opacity duration-700 {{ $loop->first ? '' : 'opacity-0' }}">
+                        @endforeach
+                    @else
+                        <x-tray-art :xonca="$xonca" />
+                    @endif
                 </div>
-                @if ($xonca->imageUrls())
-                    <div class="scrollbar-none mt-3 flex gap-2 overflow-x-auto">
-                        @foreach ($xonca->imageUrls() as $img)
-                            <a href="{{ $img }}" target="_blank" class="shrink-0"><img src="{{ $img }}" alt="{{ $xonca->name }}" class="size-20 rounded-2xl object-cover ring-1 ring-wine-900/10 sm:size-24"></a>
+                @if (count($photos) > 1)
+                    <div class="mt-3 grid grid-cols-5 gap-3">
+                        @foreach ($photos as $p)
+                            <button type="button" data-gallery-thumb="{{ $loop->index }}" class="aspect-square overflow-hidden opacity-50 transition hover:opacity-100 data-[on]:opacity-100">
+                                <img src="{{ Img::url($p, 300) }}" alt="" class="size-full object-cover">
+                            </button>
                         @endforeach
                     </div>
                 @endif
             </div>
 
-            {{-- PANEL --}}
-            <div id="qurucu" class="scroll-mt-24">
-                <div class="flex flex-wrap gap-1.5">
-                    @foreach ($xonca->occasions as $o)
-                        <a href="{{ route('catalog.occasion', $o) }}" class="rounded-full px-3 py-1 text-xs font-bold" style="background: {{ $o->accent }}14; color: {{ $o->accent }}">{{ $o->name }}</a>
-                    @endforeach
-                    <span class="rounded-full bg-ink/5 px-3 py-1 text-xs font-bold text-ink/50">{{ $xonca->code }}</span>
+            {{-- DETAILS & BUILDER --}}
+            <div>
+                <div class="caps !text-[10px] text-gold-deep">N° {{ preg_replace('/\D+/', '', $xonca->code) }} <span class="mx-2 text-mist">·</span> {{ $xonca->occasions->pluck('name')->implode(' · ') }}</div>
+                <h1 class="mt-5 font-display text-6xl leading-none lg:text-7xl">{{ $xonca->name }}</h1>
+                <div class="mt-6 flex flex-wrap items-baseline gap-x-4 gap-y-1">
+                    <span class="font-display text-3xl">{{ Money::format($xonca->price) }}</span>
+                    <span class="caps !text-[10px] text-mist">icarə · çatdırılma və geri alma ilə</span>
                 </div>
-                <h1 class="mt-3 text-4xl font-semibold sm:text-5xl">{{ $xonca->name }}</h1>
-                <p class="mt-3 text-ink/65">{{ $xonca->description }}</p>
+                <p class="mt-8 max-w-lg text-[17px] leading-relaxed text-taupe">{{ $xonca->description }}</p>
 
-                <dl class="mt-5 grid grid-cols-3 gap-2 text-center text-sm">
-                    <div class="rounded-2xl bg-white p-3 ring-1 ring-wine-900/5"><dt class="text-xs text-ink/45">Forma</dt><dd class="font-bold">{{ \App\Models\Xonca::SHAPES[$xonca->shape] ?? '' }}</dd></div>
-                    <div class="rounded-2xl bg-white p-3 ring-1 ring-wine-900/5"><dt class="text-xs text-ink/45">Ölçü</dt><dd class="font-bold">{{ $xonca->size_cm }} sm</dd></div>
-                    <div class="rounded-2xl bg-white p-3 ring-1 ring-wine-900/5"><dt class="text-xs text-ink/45">Örtük</dt><dd class="font-bold">{{ \App\Models\Xonca::COVERS[$xonca->cover_type] ?? '' }}</dd></div>
+                <dl class="mt-10 grid grid-cols-3 border-y border-ink/10 py-6 text-center">
+                    @foreach ([['Forma', \App\Models\Xonca::SHAPES[$xonca->shape] ?? ''], ['Ölçü', $xonca->size_cm . ' sm'], ['Örtük', \App\Models\Xonca::COVERS[$xonca->cover_type] ?? '']] as [$k, $v])
+                        <div class="border-ink/10 [&:not(:first-child)]:border-l">
+                            <dt class="caps !text-[10px] text-mist">{{ $k }}</dt>
+                            <dd class="mt-2 font-display text-xl">{{ $v }}</dd>
+                        </div>
+                    @endforeach
                 </dl>
 
-                {{-- Ribbon --}}
-                <section class="mt-8">
-                    <h2 class="flex items-center justify-between font-sans text-sm font-bold tracking-wide text-ink/80 uppercase">
-                        <span><span class="text-gold-600">01</span> · Lent rəngi</span>
-                        <span data-ribbon-name class="text-xs font-semibold text-ink/45 normal-case"></span>
-                    </h2>
-                    <div class="mt-3 flex flex-wrap gap-2.5" data-ribbons>
+                {{-- I. Ribbon --}}
+                <section class="mt-14">
+                    <div class="flex items-baseline justify-between">
+                        <h2 class="caps text-ink"><span class="mr-3 font-display text-base text-gold italic normal-case">I</span>Lentin rəngi</h2>
+                        <span data-ribbon-name class="font-display text-lg text-taupe italic"></span>
+                    </div>
+                    <div class="mt-6 flex flex-wrap gap-4" data-ribbons>
                         @foreach ($xonca->ribbonChoices() as $c)
-                            <button type="button" data-ribbon="{{ $c }}" aria-label="Lent rəngi {{ $c }}"
-                                class="size-10 rounded-full ring-2 ring-transparent ring-offset-2 ring-offset-cream transition hover:scale-110 data-[on]:ring-wine-600"
-                                style="background: radial-gradient(circle at 35% 30%, #ffffff66, transparent 45%), {{ $c }}; box-shadow: inset 0 0 0 1px #0000001a"></button>
+                            <button type="button" data-ribbon="{{ $c }}" aria-label="Lent {{ $c }}"
+                                class="grid size-11 place-items-center rounded-full ring-1 ring-transparent transition hover:ring-ink/30 data-[on]:ring-gold">
+                                <span class="size-8 rounded-full" style="background: {{ $c }}; box-shadow: inset 0 0 0 1px rgba(0,0,0,.12), inset 0 6px 10px rgba(255,255,255,.25)"></span>
+                            </button>
                         @endforeach
                     </div>
                 </section>
 
-                {{-- Fill --}}
-                <section class="mt-8">
-                    <h2 class="font-sans text-sm font-bold tracking-wide text-ink/80 uppercase"><span class="text-gold-600">02</span> · İçini kim dolduracaq?</h2>
-                    <div class="mt-3 grid grid-cols-3 gap-2 rounded-2xl bg-white p-1.5 ring-1 ring-wine-900/5" data-modes>
-                        <button type="button" data-mode="ours" class="rounded-xl px-2 py-3 text-center text-sm font-bold transition data-[on]:bg-wine-600 data-[on]:text-white">🎁<span class="block text-xs sm:text-sm">Hazır</span></button>
-                        @if ($xonca->fill_allowed)
-                            <button type="button" data-mode="custom" class="rounded-xl px-2 py-3 text-center text-sm font-bold transition data-[on]:bg-wine-600 data-[on]:text-white">✨<span class="block text-xs sm:text-sm">Özüm seçim</span></button>
-                        @endif
-                        <button type="button" data-mode="empty" class="rounded-xl px-2 py-3 text-center text-sm font-bold transition data-[on]:bg-wine-600 data-[on]:text-white">🏠<span class="block text-xs sm:text-sm">Boş</span></button>
+                {{-- II. Filling --}}
+                <section class="mt-14">
+                    <h2 class="caps text-ink"><span class="mr-3 font-display text-base text-gold italic normal-case">II</span>Dolduruş</h2>
+                    <div class="mt-6 border-t border-ink/10" data-modes>
+                        @foreach ([
+                            'ours' => ['Ustalarımızın dolduruşu', 'Kolleksiyadakı kimi, tam hazır gəlir', '+ ' . Money::format($oursTotal)],
+                            'custom' => ['Öz seçiminiz', 'Hər əşyanı özünüz seçin', 'seçimə görə'],
+                            'empty' => ['Boş xonça', 'İçini evdə özünüz doldurursunuz', $xonca->empty_discount > 0 ? '− ' . Money::format($xonca->empty_discount) : ''],
+                        ] as $mode => [$t, $d, $p])
+                            @continue($mode === 'custom' && ! $xonca->fill_allowed)
+                            <button type="button" data-mode="{{ $mode }}" class="group flex w-full items-center gap-5 border-b border-ink/10 py-5 text-left">
+                                <span class="grid size-5 shrink-0 place-items-center rounded-full ring-1 ring-ink/30 group-data-[on]:ring-gold">
+                                    <span class="size-2.5 scale-0 rounded-full bg-gold transition group-data-[on]:scale-100"></span>
+                                </span>
+                                <span class="flex-1">
+                                    <span class="block font-display text-2xl leading-tight">{{ $t }}</span>
+                                    <span class="mt-1 block text-sm text-mist">{{ $d }}</span>
+                                </span>
+                                <span class="caps !text-[10px] whitespace-nowrap text-taupe">{{ $p }}</span>
+                            </button>
+                        @endforeach
                     </div>
 
-                    <div data-pane="ours" class="mt-4">
-                        <p class="text-sm text-ink/60">Ustalarımızın bu xonça üçün hazırladığı dolduruş:</p>
-                        <ul class="mt-3 divide-y divide-wine-900/5 rounded-2xl bg-white ring-1 ring-wine-900/5" data-ours-list></ul>
+                    <div data-pane="ours" class="mt-8">
+                        <ul class="grid gap-x-8 sm:grid-cols-2">
+                            @forelse ($ours as $f)
+                                <li class="flex items-center gap-4 border-b border-ink/5 py-3">
+                                    <span class="grid size-11 shrink-0 place-items-center rounded-full bg-pearl text-gold ring-1 ring-gold/25">{!! \App\Support\Icons::svg($f->item->model, 'size-6') !!}</span>
+                                    <span class="flex-1 text-sm">{{ $f->item->name }}</span>
+                                    <span class="caps !text-[10px] text-mist">× {{ $f->qty }}</span>
+                                </li>
+                            @empty
+                                <li class="text-sm text-mist">Bu xonça dolduruşsuz təklif olunur.</li>
+                            @endforelse
+                        </ul>
                     </div>
 
-                    <div data-pane="custom" class="mt-4 hidden">
-                        <div class="flex items-center justify-between gap-3">
-                            <p class="text-sm text-ink/60">Toxunun — xonçaya əlavə olunsun.</p>
-                            <div class="flex gap-2 text-xs font-bold">
-                                <button type="button" data-fill-reset class="text-wine-600 hover:underline">Hazırdan başla</button>
-                                <span class="text-ink/20">|</span>
-                                <button type="button" data-fill-clear class="text-ink/50 hover:underline">Təmizlə</button>
-                            </div>
-                        </div>
-                        <div class="scrollbar-none -mx-4 mt-3 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0" data-cats>
-                            <button type="button" data-cat="all" class="chip shrink-0 !py-1 text-xs">Hamısı</button>
+                    <div data-pane="custom" class="mt-8 hidden">
+                        <div class="scrollbar-none -mx-5 flex gap-6 overflow-x-auto px-5 sm:mx-0 sm:px-0" data-cats>
+                            <button type="button" data-cat="all" class="caps shrink-0 border-b border-transparent pb-2 !text-[10px] text-mist data-[on]:border-ink data-[on]:text-ink">Hamısı</button>
                             @foreach ($categories as $c)
-                                <button type="button" data-cat="{{ $c->id }}" class="chip shrink-0 !py-1 text-xs">{{ $c->name }}</button>
+                                <button type="button" data-cat="{{ $c->id }}" class="caps shrink-0 border-b border-transparent pb-2 !text-[10px] text-mist data-[on]:border-ink data-[on]:text-ink">{{ $c->name }}</button>
                             @endforeach
                         </div>
-                        <div class="mt-3 grid grid-cols-2 gap-x-2 gap-y-3 pt-1 xl:grid-cols-3" data-item-grid></div>
+                        <ul class="mt-4 grid gap-x-8 sm:grid-cols-2" data-item-grid></ul>
+                        <div class="mt-6 flex justify-end gap-6">
+                            <button type="button" data-fill-reset class="link-line !text-[10px] text-taupe">Hazırdan başla</button>
+                            <button type="button" data-fill-clear class="link-line !text-[10px] text-mist">Təmizlə</button>
+                        </div>
                     </div>
 
-                    <div data-pane="empty" class="mt-4 hidden">
-                        <div class="rounded-2xl bg-gold-100/70 p-5 text-sm text-ink/75 ring-1 ring-gold-400/30">
-                            <b>Xonçanı boş götürürsünüz</b> — sini, örtük və lentlər bəzədilmiş gəlir, içini evdə özünüz doldurursunuz.
-                            @if ($xonca->empty_discount > 0)
-                                <div class="mt-2 font-bold text-emerald-700">Boş xonça {{ \App\Support\Money::format($xonca->empty_discount) }} ucuzdur.</div>
-                            @endif
-                        </div>
+                    <div data-pane="empty" class="mt-8 hidden">
+                        <p class="border-l border-gold pl-6 font-display text-xl leading-relaxed text-taupe italic">Sini, tül və lentlər bəzədilmiş halda gəlir — içini öz əlinizlə, öz zövqünüzlə doldurursunuz.</p>
                     </div>
                 </section>
 
-                {{-- Date --}}
-                <section class="mt-8">
-                    <h2 class="font-sans text-sm font-bold tracking-wide text-ink/80 uppercase"><span class="text-gold-600">03</span> · Məclisin tarixi</h2>
-                    <input type="date" data-date min="{{ $earliest }}" class="input mt-3">
-                    <p data-date-note class="mt-2 text-sm text-ink/50">Tarixi seçin — boş olub-olmadığını dərhal göstərəcəyik. Tarixi səbətdə də seçə bilərsiniz.</p>
+                {{-- III. Date --}}
+                <section class="mt-14">
+                    <h2 class="caps text-ink"><span class="mr-3 font-display text-base text-gold italic normal-case">III</span>Məclisin tarixi</h2>
+                    <input type="date" data-date min="{{ $earliest }}" class="field mt-4 max-w-xs">
+                    <p data-date-note class="mt-3 text-sm text-mist">Tarixi seçin — boş olub-olmadığını dərhal göstərəcəyik.</p>
                 </section>
 
                 {{-- Summary --}}
-                <section class="card mt-8 p-5">
-                    <dl class="space-y-2 text-sm">
-                        <div class="flex justify-between"><dt class="text-ink/60">Xonça icarəsi</dt><dd data-sum-xonca class="font-semibold"></dd></div>
-                        <div class="flex justify-between"><dt class="text-ink/60">Dolduruş</dt><dd data-sum-fill class="font-semibold"></dd></div>
+                <section class="mt-14 bg-pearl p-8 ring-1 ring-ink/5">
+                    <dl class="space-y-3 text-sm">
+                        <div class="flex justify-between"><dt class="text-taupe">Xonça icarəsi</dt><dd data-sum-xonca></dd></div>
+                        <div class="flex justify-between"><dt class="text-taupe">Dolduruş</dt><dd data-sum-fill></dd></div>
                         @if ($xonca->deposit > 0)
-                            <div class="flex justify-between text-ink/50"><dt>Depozit (geri qaytarılır)</dt><dd>{{ \App\Support\Money::format($xonca->deposit) }}</dd></div>
+                            <div class="flex justify-between text-mist"><dt>Depozit · qaytarılır</dt><dd>{{ Money::format($xonca->deposit) }}</dd></div>
                         @endif
-                        <div class="flex items-end justify-between border-t border-wine-900/5 pt-3"><dt class="font-bold">Cəmi</dt><dd data-sum-total class="font-display text-3xl font-semibold text-wine-700"></dd></div>
                     </dl>
-                    <button type="button" data-add class="btn btn-primary mt-5 hidden w-full py-4 text-base lg:flex">Səbətə əlavə et</button>
+                    <div class="mt-6 flex items-baseline justify-between border-t border-ink/10 pt-6">
+                        <span class="caps text-ink">Cəmi</span>
+                        <span data-sum-total class="font-display text-4xl"></span>
+                    </div>
+                    <button type="button" data-add class="btn btn-dark mt-8 hidden w-full lg:flex">Səbətə əlavə et</button>
+                    <p class="mt-5 text-center text-xs text-mist">İndi ödəniş yoxdur — sifarişdən sonra zəng edib təsdiqləyirik.</p>
                 </section>
             </div>
         </div>
 
         @if ($similar->isNotEmpty())
-            <section class="mt-20">
-                <h2 class="text-3xl font-semibold">Bunlar da xoşunuza gələ bilər</h2>
-                <div class="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            <section class="container-x mt-32 border-t border-ink/10 pt-20">
+                <h2 class="text-center font-display text-5xl">Bunlar da <em class="text-gold-deep">xoşunuza gələ bilər</em></h2>
+                <div class="mt-14 grid gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-4">
                     @foreach ($similar as $x)
                         @include('site.partials.card', ['xonca' => $x])
                     @endforeach
@@ -151,14 +180,14 @@
         @endif
     </div>
 
-    {{-- Mobile action bar --}}
-    <div class="fixed inset-x-0 bottom-0 z-30 border-t border-wine-900/10 bg-white/95 px-4 pt-3 backdrop-blur lg:hidden" style="padding-bottom: calc(.75rem + env(safe-area-inset-bottom))">
-        <div class="flex items-center gap-3 pr-16">
-            <div class="min-w-0">
-                <div class="text-xs text-ink/50">Cəmi</div>
-                <div data-sum-total class="font-display text-2xl leading-none font-semibold text-wine-700"></div>
+    {{-- Phone: price and the button stay at hand --}}
+    <div class="fixed inset-x-0 bottom-0 z-30 border-t border-ink/10 bg-ivory/95 backdrop-blur lg:hidden" style="padding-bottom: env(safe-area-inset-bottom)">
+        <div class="container-x flex items-center gap-5 py-3">
+            <div>
+                <div class="caps !text-[9px] text-mist">Cəmi</div>
+                <div data-sum-total class="font-display text-2xl leading-none"></div>
             </div>
-            <button type="button" data-add class="btn btn-primary flex-1 py-3.5">Səbətə əlavə et</button>
+            <button type="button" data-add class="btn btn-dark flex-1 !px-4">Səbətə əlavə et</button>
         </div>
     </div>
 @endsection

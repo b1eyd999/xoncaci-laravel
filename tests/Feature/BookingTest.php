@@ -44,7 +44,7 @@ class BookingTest extends TestCase
         $this->get('/')->assertOk()->assertSee($x->name);
         $this->get('/xoncalar')->assertOk();
         $this->get('/xoncalar/toy')->assertOk();
-        $this->get('/xonca/' . $x->slug)->assertOk()->assertSee('İçini kim dolduracaq', false);
+        $this->get('/xonca/' . $x->slug)->assertOk()->assertSee('Lentin rəngi', false);
         $this->get('/sebet')->assertOk();
     }
 

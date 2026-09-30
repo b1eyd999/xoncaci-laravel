@@ -31,6 +31,9 @@ class Xonca extends Model
         'lux' => 'Lüks',
     ];
 
+    /** The ribbon palette customers choose from unless a xonça has its own. */
+    public const RIBBONS = ['#6e1a26', '#c2a064', '#e6c7c2', '#f4eee4', '#1f4a3d', '#1c2340'];
+
     protected $guarded = [];
 
     protected $casts = [
@@ -80,7 +83,7 @@ class Xonca extends Model
     {
         $choices = array_values(array_filter($this->ribbon_choices ?? []));
 
-        return $choices ?: array_values(array_unique([$this->ribbon_color, '#d4af37', '#f2c6d0', '#ffffff', '#1f6f5c', '#6b1f7a']));
+        return $choices ?: array_values(array_unique([$this->ribbon_color, ...self::RIBBONS]));
     }
 
     public function defaultFillTotal(): float

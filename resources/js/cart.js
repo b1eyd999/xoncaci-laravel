@@ -53,13 +53,8 @@ export const cart = {
     renderCount(bump = false) {
         const n = read().length;
         document.querySelectorAll('[data-cart-count]').forEach((el) => {
-            el.textContent = n;
+            el.textContent = `(${n})`;
             el.classList.toggle('hidden', !n);
-            if (bump) {
-                el.classList.remove('bump');
-                void el.offsetWidth;
-                el.classList.add('bump');
-            }
         });
     },
 };
@@ -73,7 +68,7 @@ export function toast(html, ms = 3500) {
     const host = document.querySelector('[data-toast]');
     if (!host) return;
     const el = document.createElement('div');
-    el.className = 'pointer-events-auto fade-up flex items-center gap-3 rounded-full bg-ink px-5 py-3 text-sm font-semibold text-white shadow-2xl';
+    el.className = 'hero-in pointer-events-auto flex items-center bg-onyx px-7 py-4 text-sm text-ivory shadow-2xl';
     el.innerHTML = html;
     host.replaceChildren(el);
     setTimeout(() => el.remove(), ms);

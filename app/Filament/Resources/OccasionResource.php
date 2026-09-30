@@ -33,6 +33,8 @@ class OccasionResource extends Resource
             Forms\Components\TextInput::make('slug')->label('Link')->prefix('/xoncalar/')->required()->unique(ignoreRecord: true),
             Forms\Components\TextInput::make('tagline')->label('Qısa şüar')->columnSpanFull(),
             Forms\Components\Textarea::make('description')->label('Təsvir')->columnSpanFull(),
+            Forms\Components\FileUpload::make('image')->label('Foto')->image()->directory('occasions')->imageResizeTargetWidth(1800)->maxSize(12288)->columnSpanFull()
+                ->helperText('Boş qalsa, uyğun pulsuz foto göstərilir. Şaquli və ya kvadrat, tünd tonlu foto yaxşı görünür.'),
             Forms\Components\ColorPicker::make('accent')->label('Kartın rəngi')->required()->default('#8a1c2b'),
             Forms\Components\TextInput::make('sort')->label('Sıra')->numeric()->default(0),
             Forms\Components\Toggle::make('is_active')->label('Saytda görünsün')->default(true),

@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\BookingResource\Pages;
 
 use App\Filament\Resources\BookingResource;
-use App\Http\Controllers\SiteController;
 use App\Models\Booking;
 use App\Models\BookingItem;
 use App\Support\Money;
@@ -12,7 +11,6 @@ use Filament\Infolists;
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
-use Illuminate\Support\HtmlString;
 
 class ViewBooking extends ViewRecord
 {
@@ -56,22 +54,9 @@ class ViewBooking extends ViewRecord
 
     public function infolist(Infolist $infolist): Infolist
     {
-        $items = SiteController::itemCatalog();
-
         return $infolist->columns(3)->schema([
             Infolists\Components\Group::make()->columnSpan(['default' => 3, 'lg' => 2])->schema([
                 Infolists\Components\RepeatableEntry::make('items')->label('Xonçalar')->schema([
-                    Infolists\Components\TextEntry::make('preview')->hiddenLabel()->columnSpan(1)
-                        ->state(function (BookingItem $item) use ($items) {
-                            if (! $item->xonca) {
-                                return '—';
-                            }
-                            $cfg = $item->xonca->toViewer();
-                            $cfg['ribbonColor'] = $item->ribbon_color ?: $cfg['ribbonColor'];
-                            $cfg['fill'] = collect($item->fill ?? [])->map(fn ($f) => ['id' => (int) $f['id'], 'qty' => (int) $f['qty']])->values()->all();
-
-                            return new HtmlString('<div wire:ignore><xonca-preview data-mode="static" data-height="260" data-config="' . e(json_encode($cfg)) . '" data-items="' . e(json_encode($items)) . '"></xonca-preview></div>');
-                        }),
                     Infolists\Components\Group::make()->columnSpan(1)->schema([
                         Infolists\Components\TextEntry::make('xonca_name')->label('Xonça')->weight('bold')->size('lg')
                             ->url(fn (BookingItem $i) => $i->xonca ? route('xonca', $i->xonca) : null, true),
@@ -84,7 +69,7 @@ class ViewBooking extends ViewRecord
                     Infolists\Components\TextEntry::make('fill')->label('İçindəkilər')->columnSpan(1)
                         ->state(fn (BookingItem $i) => collect($i->fill ?? [])->map(fn ($f) => $f['name'] . ' × ' . $f['qty'] . ' — ' . Money::format($f['price'] * $f['qty']))->all())
                         ->listWithLineBreaks()->bulleted()->placeholder('Boş xonça'),
-                ])->columns(3),
+                ])->columns(2),
                 Infolists\Components\Section::make('Qeydlər')->columns(2)->schema([
                     Infolists\Components\TextEntry::make('note')->label('Müştərinin qeydi')->placeholder('—'),
                     Infolists\Components\TextEntry::make('admin_note')->label('Daxili qeyd')->placeholder('—'),

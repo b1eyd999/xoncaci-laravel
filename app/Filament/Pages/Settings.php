@@ -53,6 +53,13 @@ class Settings extends Page implements HasForms
                         ->helperText('«—» işarəsindən sonrakı hissə qızılı rəngdə göstərilir.'),
                     Forms\Components\Textarea::make('hero_subtitle')->label('Alt mətn')->rows(3),
                 ]),
+                Forms\Components\Tabs\Tab::make('Şəkillər')->icon('heroicon-m-photo')->columns(3)->schema([
+                    Forms\Components\Placeholder::make('img_help')->hiddenLabel()->columnSpanFull()
+                        ->content('Boş qalan yerdə pulsuz Unsplash fotosu göstərilir. Öz fotolarınızı yükləyin — geniş, yüksək keyfiyyətli, tünd tonlu şəkillər ən lüks görünür.'),
+                    Forms\Components\FileUpload::make('hero_image')->label('Ana ekran (böyük foto)')->image()->directory('site')->imageResizeTargetWidth(2600)->maxSize(12288),
+                    Forms\Components\FileUpload::make('craft_image')->label('«Necə işləyir» bölməsi')->image()->directory('site')->imageResizeTargetWidth(2000)->maxSize(12288),
+                    Forms\Components\FileUpload::make('cta_image')->label('Aşağıdakı çağırış bölməsi')->image()->directory('site')->imageResizeTargetWidth(2600)->maxSize(12288),
+                ]),
                 Forms\Components\Tabs\Tab::make('İcarə və çatdırılma')->icon('heroicon-m-truck')->columns(3)->schema([
                     Forms\Components\TextInput::make('delivery_fee')->label('Çatdırılma haqqı')->numeric()->prefix('₼'),
                     Forms\Components\TextInput::make('free_delivery_from')->label('Bu məbləğdən pulsuz')->numeric()->prefix('₼')->helperText('0 = heç vaxt pulsuz deyil'),
@@ -96,6 +103,9 @@ class Settings extends Page implements HasForms
     public function save(): void
     {
         foreach ($this->form->getState() as $key => $value) {
+            if (is_array($value)) {
+                $value = reset($value) ?: '';
+            }
             Setting::put($key, is_string($value) ? trim($value) : $value);
         }
         Notification::make()->title('Yadda saxlanıldı')->success()->send();

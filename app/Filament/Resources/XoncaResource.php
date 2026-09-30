@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\XoncaResource\Pages;
-use App\Http\Controllers\SiteController;
 use App\Models\FillItem;
 use App\Models\Xonca;
 use App\Support\Money;
@@ -13,7 +12,6 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
 class XoncaResource extends Resource
@@ -35,7 +33,7 @@ class XoncaResource extends Resource
     public static function form(Form $form): Form
     {
         return $form->columns(12)->schema([
-            Forms\Components\Tabs::make()->columnSpan(['default' => 12, 'xl' => 7])->persistTabInQueryString()->tabs([
+            Forms\Components\Tabs::make()->columnSpanFull()->persistTabInQueryString()->tabs([
                 Forms\Components\Tabs\Tab::make('Əsas')->icon('heroicon-m-information-circle')->schema([
                     Forms\Components\Grid::make(2)->schema([
                         Forms\Components\TextInput::make('name')->label('Ad')->required()->maxLength(120)
@@ -53,7 +51,7 @@ class XoncaResource extends Resource
                     Forms\Components\Textarea::make('description')->label('Ətraflı təsvir')->rows(4),
                 ]),
 
-                Forms\Components\Tabs\Tab::make('Görünüş (3D)')->icon('heroicon-m-cube')->schema([
+                Forms\Components\Tabs\Tab::make('Görünüş')->icon('heroicon-m-swatch')->schema([
                     Forms\Components\Grid::make(3)->schema([
                         Forms\Components\ToggleButtons::make('shape')->label('Sini forması')->options(Xonca::SHAPES)->inline()->required()->default('round')->columnSpanFull(),
                         Forms\Components\TextInput::make('size_cm')->label('Diametr / uzunluq')->numeric()->suffix('sm')->default(60)->required(),
@@ -83,7 +81,7 @@ class XoncaResource extends Resource
 
                 Forms\Components\Tabs\Tab::make('Hazır dolduruş')->icon('heroicon-m-sparkles')->schema([
                     Forms\Components\Placeholder::make('fill_hint')->hiddenLabel()
-                        ->content('Müştəri «Hazır» seçəndə xonça bu əşyalarla gəlir. Dəyişiklik sağdakı 3D-də dərhal görünür.'),
+                        ->content('Müştəri «Ustalarımızın dolduruşu»nu seçəndə xonça bu əşyalarla gəlir.'),
                     Forms\Components\Repeater::make('defaultFills')->relationship()->hiddenLabel()
                         ->schema([
                             Forms\Components\Select::make('fill_item_id')->label('Əşya')
@@ -97,17 +95,10 @@ class XoncaResource extends Resource
                 Forms\Components\Tabs\Tab::make('Şəkillər')->icon('heroicon-m-photo')->schema([
                     Forms\Components\FileUpload::make('images')->label('Real şəkillər')->image()->multiple()->reorderable()->maxFiles(12)
                         ->directory('xoncas')->imageResizeMode('contain')->imageResizeTargetWidth(1600)->maxSize(8192)
-                        ->helperText('Birinci şəkil kataloqda göstərilir. Şəkil yoxdursa, kartda 3D görünüş olur.'),
+                        ->helperText('Birinci şəkil kataloqda göstərilir, ikincisi kartın üzərinə gələndə. Şaquli (4:5) şəkillər ən gözəl görünür. Şəkil yoxdursa, xonçanın qızılı xətt rəsmi göstərilir.'),
                 ]),
             ]),
 
-            Forms\Components\Section::make('3D önizləmə')->description('Saxlamadan əvvəl baxın — fırladın, yaxınlaşdırın.')
-                ->columnSpan(['default' => 12, 'xl' => 5])
-                ->schema([
-                    Forms\Components\Placeholder::make('preview')->hiddenLabel()->content(fn () => new HtmlString(
-                        '<div wire:ignore><xonca-preview data-mode="xonca" data-height="440" data-items="' . e(json_encode(SiteController::itemCatalog())) . '"></xonca-preview></div>'
-                    )),
-                ]),
         ]);
     }
 

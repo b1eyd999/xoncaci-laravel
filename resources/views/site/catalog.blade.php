@@ -1,69 +1,62 @@
-@extends('layouts.site', ['title' => $occasion ? $occasion->name . ' xonçaları' : 'Bütün xonçalar'])
-
-@push('head')
-    <script>window.XONCA = Object.assign(window.XONCA || {}, { items: @json($items) });</script>
-@endpush
+@extends('layouts.site', ['title' => $occasion ? $occasion->name . ' xonçaları' : 'Kolleksiya'])
+@php($q = request()->only(['forma', 'stil', 'sirala', 'tarix']))
 
 @section('content')
-    @php($q = request()->only(['forma', 'stil', 'sirala', 'tarix']))
-    <section class="ornament border-b border-wine-900/5">
-        <div class="container-x py-10 sm:py-14">
-            <nav class="text-sm text-ink/50"><a href="{{ route('home') }}" class="hover:text-wine-700">Ana səhifə</a> / Xonçalar</nav>
-            <h1 class="mt-3 text-4xl font-semibold sm:text-5xl">{{ $occasion ? $occasion->name . ' xonçaları' : 'Bütün xonçalar' }}</h1>
-            <p class="mt-3 max-w-2xl text-ink/60">{{ $occasion?->tagline ?? 'Hər xonçanı 3D-də fırladıb baxın, içini özünüz seçin və tarixinizə rezerv edin.' }}</p>
+    <section class="bg-ivory pt-16 pb-10 lg:pt-24">
+        <div class="container-x text-center">
+            <nav class="caps !text-[10px] text-mist"><a href="{{ route('home') }}" class="hover:text-ink">Ana səhifə</a> <span class="mx-2">/</span> Kolleksiya</nav>
+            <h1 class="mt-8 font-display text-6xl lg:text-8xl">{{ $occasion ? $occasion->name : 'Kolleksiya' }}</h1>
+            <p class="mx-auto mt-6 max-w-xl text-taupe">{{ $occasion?->tagline ?? 'Hər xonça əl ilə bəzədilir. Seçin, içini özünüz müəyyənləşdirin və tarixinizə rezerv edin.' }}</p>
+        </div>
 
-            <div class="scrollbar-none -mx-4 mt-8 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0">
-                <a href="{{ route('catalog', $q) }}" class="chip shrink-0 {{ ! $occasion ? 'chip-active' : '' }}">Hamısı</a>
+        <div class="container-x mt-16">
+            <nav class="scrollbar-none -mx-5 flex justify-start gap-8 overflow-x-auto border-b border-ink/10 px-5 sm:mx-0 sm:justify-center sm:px-0">
+                <a href="{{ route('catalog', $q) }}" class="caps shrink-0 border-b pb-4 {{ ! $occasion ? 'border-ink text-ink' : 'border-transparent text-mist hover:text-ink' }}">Hamısı</a>
                 @foreach ($occasions as $o)
-                    <a href="{{ route('catalog.occasion', ['occasion' => $o] + $q) }}" class="chip shrink-0 {{ $occasion?->id === $o->id ? 'chip-active' : '' }}">{{ $o->name }}</a>
+                    <a href="{{ route('catalog.occasion', ['occasion' => $o] + $q) }}" class="caps shrink-0 border-b pb-4 {{ $occasion?->id === $o->id ? 'border-ink text-ink' : 'border-transparent text-mist hover:text-ink' }}">{{ $o->name }}</a>
                 @endforeach
-            </div>
+            </nav>
 
-            <form method="get" class="mt-4 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center" data-autosubmit>
-                <select name="forma" class="input !w-auto !rounded-full !py-2 text-sm">
-                    <option value="">Forma: hamısı</option>
-                    @foreach (\App\Models\Xonca::SHAPES as $k => $v)
-                        <option value="{{ $k }}" @selected(($q['forma'] ?? '') === $k)>{{ $v }}</option>
-                    @endforeach
-                </select>
-                <select name="stil" class="input !w-auto !rounded-full !py-2 text-sm">
-                    <option value="">Stil: hamısı</option>
-                    @foreach (\App\Models\Xonca::STYLES as $k => $v)
-                        <option value="{{ $k }}" @selected(($q['stil'] ?? '') === $k)>{{ $v }}</option>
-                    @endforeach
-                </select>
-                <select name="sirala" class="input !w-auto !rounded-full !py-2 text-sm">
-                    <option value="">Sırala: tövsiyə</option>
-                    <option value="ucuz" @selected(($q['sirala'] ?? '') === 'ucuz')>Əvvəl ucuz</option>
-                    <option value="baha" @selected(($q['sirala'] ?? '') === 'baha')>Əvvəl bahalı</option>
-                </select>
-                <label class="relative">
-                    <span class="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-xs font-semibold text-ink/45">{{ $date ? '' : 'Tarix:' }}</span>
-                    <input type="date" name="tarix" value="{{ $date }}" min="{{ now()->toDateString() }}" class="input !rounded-full !py-2 text-sm {{ $date ? '' : '!pl-14' }}">
+            <form method="get" data-autosubmit class="mt-8 grid grid-cols-2 gap-x-8 gap-y-6 md:flex md:items-end md:justify-center">
+                @foreach ([['forma', 'Forma', \App\Models\Xonca::SHAPES], ['stil', 'Stil', \App\Models\Xonca::STYLES], ['sirala', 'Sıralama', ['ucuz' => 'Əvvəl ucuz', 'baha' => 'Əvvəl bahalı']]] as [$name, $label, $options])
+                    <label class="block md:w-44">
+                        <span class="field-label !text-[10px]">{{ $label }}</span>
+                        <select name="{{ $name }}" class="field cursor-pointer !py-2">
+                            <option value="">Hamısı</option>
+                            @foreach ($options as $k => $v)
+                                <option value="{{ $k }}" @selected(($q[$name] ?? '') === $k)>{{ $v }}</option>
+                            @endforeach
+                        </select>
+                    </label>
+                @endforeach
+                <label class="block md:w-44">
+                    <span class="field-label !text-[10px]">Məclis tarixi</span>
+                    <input type="date" name="tarix" value="{{ $date }}" min="{{ now()->toDateString() }}" class="field !py-2">
                 </label>
                 @if ($q)
-                    <a href="{{ $occasion ? route('catalog.occasion', $occasion) : route('catalog') }}" class="col-span-2 text-center text-sm font-semibold text-wine-600 sm:col-span-1">Təmizlə ✕</a>
+                    <a href="{{ $occasion ? route('catalog.occasion', $occasion) : route('catalog') }}" class="link-line col-span-2 justify-self-center text-taupe md:mb-2">Təmizlə</a>
                 @endif
             </form>
             @if ($date)
-                <p class="mt-3 text-sm font-semibold text-emerald-700">✓ {{ \Carbon\Carbon::parse($date)->translatedFormat('j F Y') }} tarixinə boş olan xonçalar göstərilir</p>
+                <p class="caps mt-8 text-center !text-[10px] text-gold-deep">{{ \Carbon\Carbon::parse($date)->translatedFormat('j F Y') }} tarixinə boş olan xonçalar</p>
             @endif
         </div>
     </section>
 
-    <section class="container-x py-10">
-        @if ($xoncas->isEmpty())
-            <div class="card mx-auto max-w-lg p-10 text-center">
-                <div class="text-5xl">🕊️</div>
-                <h2 class="mt-4 text-2xl font-semibold">Uyğun xonça tapılmadı</h2>
-                <p class="mt-2 text-ink/60">Filtrləri dəyişin və ya bizə yazın — sizin üçün xüsusi xonça hazırlayaq.</p>
-            </div>
-        @else
-            <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                @foreach ($xoncas as $xonca)
-                    @include('site.partials.card', ['xonca' => $xonca])
-                @endforeach
-            </div>
-        @endif
+    <section class="bg-ivory pb-32">
+        <div class="container-x">
+            @if ($xoncas->isEmpty())
+                <div class="mx-auto max-w-lg py-24 text-center">
+                    <h2 class="font-display text-4xl">Uyğun xonça tapılmadı</h2>
+                    <p class="mt-4 text-taupe">Seçimləri dəyişin və ya bizə yazın — sizin üçün xüsusi xonça hazırlayaq.</p>
+                </div>
+            @else
+                <div class="mt-8 grid gap-x-6 gap-y-16 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    @foreach ($xoncas as $xonca)
+                        @include('site.partials.card', ['xonca' => $xonca])
+                    @endforeach
+                </div>
+            @endif
+        </div>
     </section>
 @endsection

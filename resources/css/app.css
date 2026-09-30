@@ -3,30 +3,31 @@
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
 @source '../**/*.js';
+@source '../../app/Support/*.php';
 
+/*
+ * Maison look: warm ivory and onyx, champagne gold used as a hairline and
+ * never as a fill, a light display serif and small tracked capitals.
+ */
 @theme {
-    --font-sans: 'Manrope', ui-sans-serif, system-ui, sans-serif;
-    --font-serif: 'Playfair Display', Georgia, serif;
+    --font-sans: 'Jost', ui-sans-serif, system-ui, sans-serif;
+    --font-serif: 'Cormorant Garamond', 'Times New Roman', serif;
 
-    --color-wine-50: #fbf1f2;
-    --color-wine-100: #f5dde1;
-    --color-wine-200: #e9b5be;
-    --color-wine-400: #c2566a;
-    --color-wine-600: #8a1c2b;
-    --color-wine-700: #731523;
-    --color-wine-800: #5a101b;
-    --color-wine-900: #3d0a12;
+    --color-onyx: #0f0d0c;
+    --color-onyx-2: #181513;
+    --color-onyx-3: #231f1c;
+    --color-ivory: #f6f1e9;
+    --color-pearl: #fbf8f3;
+    --color-sand: #ebe3d6;
+    --color-ink: #1a1614;
+    --color-taupe: #6f655c;
+    --color-mist: #a39a90;
+    --color-gold: #b39359;
+    --color-gold-soft: #d6c39c;
+    --color-gold-deep: #8c6f3e;
+    --color-wine: #4d1621;
 
-    --color-gold-100: #f8efd9;
-    --color-gold-200: #efdcae;
-    --color-gold-300: #e3c47f;
-    --color-gold-400: #d4ad5a;
-    --color-gold-500: #c9a14a;
-    --color-gold-600: #a8822f;
-    --color-gold-700: #7f6122;
-
-    --color-cream: #fbf6ef;
-    --color-ink: #2b1b20;
+    --ease-lux: cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 @layer base {
@@ -35,110 +36,140 @@
         -webkit-tap-highlight-color: transparent;
     }
     body {
-        @apply bg-cream text-ink font-sans antialiased;
+        @apply bg-ivory font-sans text-[15px] leading-relaxed font-light text-ink antialiased;
     }
-    h1, h2, h3, .font-display {
-        font-family: var(--font-serif);
-        letter-spacing: -0.01em;
+    ::selection {
+        background: var(--color-gold-soft);
+        color: var(--color-onyx);
     }
-    [x-cloak] {
-        display: none !important;
+    input[type='date']::-webkit-calendar-picker-indicator {
+        opacity: 0.5;
     }
+}
+
+@utility font-display {
+    font-family: var(--font-serif);
+    font-weight: 300;
+    letter-spacing: -0.005em;
+}
+
+@utility caps {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+}
+
+@utility container-x {
+    margin-inline: auto;
+    width: 100%;
+    max-width: 88rem;
+    padding-inline: 1.25rem;
+    @media (width >= 40rem) {
+        padding-inline: 2.5rem;
+    }
+    @media (width >= 80rem) {
+        padding-inline: 4rem;
+    }
+}
+
+@utility hairline {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--color-gold) 20%, var(--color-gold) 80%, transparent);
+    opacity: 0.55;
 }
 
 @layer components {
-    .container-x {
-        @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
-    }
     .btn {
-        @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition duration-200 select-none disabled:opacity-50 disabled:pointer-events-none;
+        @apply inline-flex items-center justify-center gap-3 px-9 py-4 text-[11px] font-normal tracking-[0.28em] uppercase transition duration-500 select-none disabled:pointer-events-none disabled:opacity-40;
+        transition-timing-function: var(--ease-lux);
     }
-    .btn-primary {
-        @apply bg-wine-600 text-white shadow-lg shadow-wine-600/25 hover:bg-wine-700 hover:-translate-y-0.5 active:translate-y-0;
+    .btn-dark {
+        @apply bg-onyx text-ivory hover:bg-gold-deep;
     }
     .btn-gold {
-        @apply text-wine-900 shadow-lg shadow-gold-500/30 hover:-translate-y-0.5;
-        background: linear-gradient(135deg, #f3dc9c, #c9a14a 55%, #e8c77a);
+        @apply bg-gold text-onyx hover:bg-gold-soft;
     }
-    .btn-ghost {
-        @apply border border-wine-600/20 text-wine-700 hover:bg-wine-50;
+    .btn-line {
+        @apply border border-ink/25 text-ink hover:border-ink hover:bg-ink hover:text-ivory;
     }
-    .card {
-        @apply rounded-3xl bg-white shadow-[0_10px_40px_-15px_rgba(90,16,27,0.18)] ring-1 ring-wine-900/5;
+    .btn-line-light {
+        @apply border border-ivory/40 text-ivory hover:border-ivory hover:bg-ivory hover:text-onyx;
     }
-    .chip {
-        @apply inline-flex items-center gap-1.5 rounded-full border border-wine-900/10 bg-white px-3.5 py-1.5 text-sm font-medium text-ink/80 transition hover:border-wine-600/40 hover:text-wine-700;
+    .link-line {
+        @apply relative inline-flex items-center gap-3 pb-1 text-[11px] tracking-[0.28em] uppercase;
+        background: linear-gradient(currentColor, currentColor) 0 100% / 100% 1px no-repeat;
+        transition: background-size 0.5s var(--ease-lux);
     }
-    .chip-active {
-        @apply border-wine-600 bg-wine-600 text-white hover:text-white;
+    .link-line:hover {
+        background-size: 30% 1px;
     }
-    .input {
-        @apply w-full rounded-2xl border border-wine-900/10 bg-white px-4 py-3 text-[15px] outline-none transition placeholder:text-ink/35 focus:border-wine-600 focus:ring-4 focus:ring-wine-600/10;
+    .field {
+        @apply w-full border-0 border-b border-ink/20 bg-transparent px-0 pt-2 pb-3 text-[15px] font-light text-ink transition outline-none placeholder:text-mist focus:border-gold;
     }
-    .label {
-        @apply mb-1.5 block text-sm font-semibold text-ink/80;
+    .field-label {
+        @apply caps mb-1 block text-taupe;
     }
-    .eyebrow {
-        @apply inline-flex items-center gap-2 text-xs font-bold tracking-[0.2em] text-gold-600 uppercase;
+    .img-zoom img {
+        transition: transform 1.6s var(--ease-lux);
     }
-    .ornament {
-        background-image: radial-gradient(circle at 1px 1px, rgba(138, 28, 43, 0.07) 1px, transparent 0);
-        background-size: 22px 22px;
-    }
-    .gold-text {
-        background: linear-gradient(120deg, #a8822f, #e3c47f 45%, #a8822f 80%);
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
-    }
-    .stage {
-        background: radial-gradient(ellipse at 50% 35%, #fff 0%, #fbf1e4 45%, #f2e2cf 100%);
-    }
-    .stage-dark {
-        background: radial-gradient(ellipse at 50% 30%, #6d1a28 0%, #3d0a12 60%, #26060c 100%);
-    }
-    .scrollbar-none {
-        scrollbar-width: none;
-    }
-    .scrollbar-none::-webkit-scrollbar {
-        display: none;
+    .img-zoom:hover img {
+        transform: scale(1.045);
     }
 }
 
-.fade-up {
-    animation: fade-up 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
-}
-@keyframes fade-up {
-    from {
-        opacity: 0;
-        transform: translateY(18px);
-    }
-}
 .reveal {
     opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+    transform: translateY(28px);
+    transition: opacity 1.2s var(--ease-lux), transform 1.2s var(--ease-lux);
 }
 .reveal.in {
     opacity: 1;
     transform: none;
 }
-.shimmer {
-    background: linear-gradient(90deg, #f6ede2 0%, #fff8ef 50%, #f6ede2 100%);
-    background-size: 200% 100%;
-    animation: shimmer 1.4s infinite;
+.hero-in {
+    animation: hero-in 1.8s var(--ease-lux) both;
 }
-@keyframes shimmer {
-    to {
-        background-position: -200% 0;
+@keyframes hero-in {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
     }
 }
-.bump {
-    animation: bump 0.45s ease;
+.ken-burns {
+    animation: ken 22s ease-out both;
 }
-@keyframes bump {
-    40% {
-        transform: scale(1.25);
+@keyframes ken {
+    from {
+        transform: scale(1.12);
+    }
+}
+.scroll-cue::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1px;
+    height: 100%;
+    background: var(--color-gold-soft);
+    animation: cue 2.4s var(--ease-lux) infinite;
+    transform-origin: top;
+}
+@keyframes cue {
+    0% {
+        transform: scaleY(0);
+    }
+    50% {
+        transform: scaleY(1);
+        transform-origin: top;
+    }
+    51% {
+        transform-origin: bottom;
+    }
+    100% {
+        transform: scaleY(0);
+        transform-origin: bottom;
     }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -146,9 +177,25 @@
         opacity: 1;
         transform: none;
     }
-    .fade-up,
-    .shimmer,
-    .bump {
+    .hero-in,
+    .ken-burns,
+    .scroll-cue::after {
         animation: none;
     }
+}
+
+@utility scrollbar-none {
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+select.field {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8' fill='none' stroke='%23b39359'%3E%3Cpath d='M1 1.5l5 5 5-5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 2px center;
+    background-size: 10px;
+    padding-right: 1.5rem;
 }

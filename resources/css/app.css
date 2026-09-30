@@ -1,0 +1,154 @@
+@import 'tailwindcss';
+
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+    --font-serif: 'Playfair Display', Georgia, serif;
+
+    --color-wine-50: #fbf1f2;
+    --color-wine-100: #f5dde1;
+    --color-wine-200: #e9b5be;
+    --color-wine-400: #c2566a;
+    --color-wine-600: #8a1c2b;
+    --color-wine-700: #731523;
+    --color-wine-800: #5a101b;
+    --color-wine-900: #3d0a12;
+
+    --color-gold-100: #f8efd9;
+    --color-gold-200: #efdcae;
+    --color-gold-300: #e3c47f;
+    --color-gold-400: #d4ad5a;
+    --color-gold-500: #c9a14a;
+    --color-gold-600: #a8822f;
+    --color-gold-700: #7f6122;
+
+    --color-cream: #fbf6ef;
+    --color-ink: #2b1b20;
+}
+
+@layer base {
+    html {
+        scroll-behavior: smooth;
+        -webkit-tap-highlight-color: transparent;
+    }
+    body {
+        @apply bg-cream text-ink font-sans antialiased;
+    }
+    h1, h2, h3, .font-display {
+        font-family: var(--font-serif);
+        letter-spacing: -0.01em;
+    }
+    [x-cloak] {
+        display: none !important;
+    }
+}
+
+@layer components {
+    .container-x {
+        @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+    }
+    .btn {
+        @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition duration-200 select-none disabled:opacity-50 disabled:pointer-events-none;
+    }
+    .btn-primary {
+        @apply bg-wine-600 text-white shadow-lg shadow-wine-600/25 hover:bg-wine-700 hover:-translate-y-0.5 active:translate-y-0;
+    }
+    .btn-gold {
+        @apply text-wine-900 shadow-lg shadow-gold-500/30 hover:-translate-y-0.5;
+        background: linear-gradient(135deg, #f3dc9c, #c9a14a 55%, #e8c77a);
+    }
+    .btn-ghost {
+        @apply border border-wine-600/20 text-wine-700 hover:bg-wine-50;
+    }
+    .card {
+        @apply rounded-3xl bg-white shadow-[0_10px_40px_-15px_rgba(90,16,27,0.18)] ring-1 ring-wine-900/5;
+    }
+    .chip {
+        @apply inline-flex items-center gap-1.5 rounded-full border border-wine-900/10 bg-white px-3.5 py-1.5 text-sm font-medium text-ink/80 transition hover:border-wine-600/40 hover:text-wine-700;
+    }
+    .chip-active {
+        @apply border-wine-600 bg-wine-600 text-white hover:text-white;
+    }
+    .input {
+        @apply w-full rounded-2xl border border-wine-900/10 bg-white px-4 py-3 text-[15px] outline-none transition placeholder:text-ink/35 focus:border-wine-600 focus:ring-4 focus:ring-wine-600/10;
+    }
+    .label {
+        @apply mb-1.5 block text-sm font-semibold text-ink/80;
+    }
+    .eyebrow {
+        @apply inline-flex items-center gap-2 text-xs font-bold tracking-[0.2em] text-gold-600 uppercase;
+    }
+    .ornament {
+        background-image: radial-gradient(circle at 1px 1px, rgba(138, 28, 43, 0.07) 1px, transparent 0);
+        background-size: 22px 22px;
+    }
+    .gold-text {
+        background: linear-gradient(120deg, #a8822f, #e3c47f 45%, #a8822f 80%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+    .stage {
+        background: radial-gradient(ellipse at 50% 35%, #fff 0%, #fbf1e4 45%, #f2e2cf 100%);
+    }
+    .stage-dark {
+        background: radial-gradient(ellipse at 50% 30%, #6d1a28 0%, #3d0a12 60%, #26060c 100%);
+    }
+    .scrollbar-none {
+        scrollbar-width: none;
+    }
+    .scrollbar-none::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+.fade-up {
+    animation: fade-up 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+@keyframes fade-up {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+}
+.reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.reveal.in {
+    opacity: 1;
+    transform: none;
+}
+.shimmer {
+    background: linear-gradient(90deg, #f6ede2 0%, #fff8ef 50%, #f6ede2 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s infinite;
+}
+@keyframes shimmer {
+    to {
+        background-position: -200% 0;
+    }
+}
+.bump {
+    animation: bump 0.45s ease;
+}
+@keyframes bump {
+    40% {
+        transform: scale(1.25);
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .reveal {
+        opacity: 1;
+        transform: none;
+    }
+    .fade-up,
+    .shimmer,
+    .bump {
+        animation: none;
+    }
+}

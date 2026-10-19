@@ -35,7 +35,7 @@ class Img
             return $value;
         }
 
-        return Storage::url($value);
+        return Storage::disk('public')->url($value);
     }
 
     /** A srcset so phones do not download the desktop picture. */

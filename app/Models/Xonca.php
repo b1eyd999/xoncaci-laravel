@@ -75,7 +75,7 @@ class Xonca extends Model
     /** @return list<string> */
     public function imageUrls(): array
     {
-        return collect($this->images ?? [])->map(fn ($p) => Storage::url($p))->values()->all();
+        return collect($this->images ?? [])->map(fn ($p) => Storage::disk('public')->url($p))->values()->all();
     }
 
     /** @return list<string> */

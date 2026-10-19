@@ -53,7 +53,7 @@ class FillItem extends Model
 
     public function imageUrl(): ?string
     {
-        return $this->image ? Storage::url($this->image) : null;
+        return $this->image ? Storage::disk('public')->url($this->image) : null;
     }
 
     /** What the 3D viewer and the builder need about this item. */

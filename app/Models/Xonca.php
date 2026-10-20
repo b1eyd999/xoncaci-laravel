@@ -78,6 +78,21 @@ class Xonca extends Model
         return collect($this->images ?? [])->map(fn ($p) => Storage::disk('public')->url($p))->values()->all();
     }
 
+    public function hasAr(): bool
+    {
+        return filled($this->model_glb);
+    }
+
+    public function glbUrl(): ?string
+    {
+        return $this->model_glb ? (str_starts_with($this->model_glb, 'http') ? $this->model_glb : Storage::disk('public')->url($this->model_glb)) : null;
+    }
+
+    public function usdzUrl(): ?string
+    {
+        return $this->model_usdz ? (str_starts_with($this->model_usdz, 'http') ? $this->model_usdz : Storage::disk('public')->url($this->model_usdz)) : null;
+    }
+
     /** @return list<string> */
     public function ribbonChoices(): array
     {

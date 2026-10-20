@@ -1,6 +1,7 @@
 import { cart } from './cart.js';
 import { initBuilder } from './builder.js';
 import { initCartPage } from './cart-page.js';
+import { initAr } from './ar.js';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -71,3 +72,4 @@ cart.renderCount();
 
 initBuilder();
 initCartPage();
+initAr();

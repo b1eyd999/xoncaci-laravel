@@ -9,6 +9,9 @@
         @else
             <x-tray-art :xonca="$xonca" class="transition-transform duration-[1600ms] group-hover:scale-[1.03]" />
         @endif
+        @if ($xonca->hasAr())
+            <span class="caps absolute top-4 left-4 bg-onyx/80 px-3 py-1.5 !text-[9px] text-gold-soft backdrop-blur">3D · AR</span>
+        @endif
         <span class="caps absolute inset-x-0 bottom-0 translate-y-full bg-onyx/85 py-4 text-center text-ivory transition-transform duration-500 group-hover:translate-y-0">Ətraflı</span>
     </div>
     <div class="mt-6 flex items-start justify-between gap-4">

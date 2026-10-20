@@ -23,3 +23,9 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+
+# 3D scans: phones open them in the camera only when served as these types.
+<IfModule mod_mime.c>
+    AddType model/gltf-binary .glb
+    AddType model/vnd.usdz+zip .usdz
+</IfModule>

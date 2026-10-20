@@ -92,6 +92,23 @@ class XoncaResource extends Resource
                         ->columns(4)->addActionLabel('Əşya əlavə et')->reorderable(false)->defaultItems(0),
                 ]),
 
+                Forms\Components\Tabs\Tab::make('3D və AR')->icon('heroicon-m-cube-transparent')->schema([
+                    Forms\Components\Placeholder::make('ar_help')->hiddenLabel()->content(new \Illuminate\Support\HtmlString(
+                        '<div class="space-y-2 text-sm leading-relaxed">'
+                        . '<p><b>Müştəri telefonun kamerası ilə xonçanı öz evində, real ölçüdə görür.</b> Bunun üçün xonçanın 3D skanı lazımdır.</p>'
+                        . '<p>1) Telefona pulsuz <b>Polycam</b>, <b>KIRI Engine</b> və ya <b>RealityScan</b> tətbiqini yükləyin. '
+                        . '2) Hazır xonçanı işıqlı, sadə fonlu masaya qoyun. 3) «Object / Photo mode» seçin və xonçanın ətrafında yavaş-yavaş 3 dövrə vurun: aşağıdan, ortadan, yuxarıdan (60–120 şəkil). '
+                        . '4) Hazır olanda <b>GLB</b> formatında ixrac edin və bura yükləyin.</p>'
+                        . '<p>Ölçü avtomatik düzəldilir: saytda xonça «Görünüş» bölməsindəki diametrə (sm) uyğun göstərilir. iPhone üçün USDZ faylı vacib deyil — sayt özü hazırlayır; tətbiq USDZ də verirsə, onu da yükləyin.</p></div>'
+                    )),
+                    Forms\Components\FileUpload::make('model_glb')->label('3D model (.glb)')
+                        ->disk('public')->directory('models')->maxSize(51200)
+                        ->acceptedFileTypes(['model/gltf-binary', 'application/octet-stream', '.glb'])
+                        ->helperText('50 MB-a qədər. 5–15 MB olanda telefonda daha tez açılır.'),
+                    Forms\Components\FileUpload::make('model_usdz')->label('iPhone üçün (.usdz) — istəyə görə')
+                        ->disk('public')->directory('models')->maxSize(51200)
+                        ->acceptedFileTypes(['model/vnd.usdz+zip', 'model/usd', 'application/zip', 'application/octet-stream', '.usdz']),
+                ]),
                 Forms\Components\Tabs\Tab::make('Şəkillər')->icon('heroicon-m-photo')->schema([
                     Forms\Components\FileUpload::make('images')->label('Real şəkillər')->image()->multiple()->reorderable()->maxFiles(12)
                         ->directory('xoncas')->imageResizeMode('contain')->imageResizeTargetWidth(1600)->maxSize(8192)
@@ -113,6 +130,7 @@ class XoncaResource extends Resource
                 Tables\Columns\TextColumn::make('name')->label('Ad')->searchable()->weight('bold')
                     ->description(fn (Xonca $r) => (Xonca::SHAPES[$r->shape] ?? '') . ' · ' . (Xonca::COVERS[$r->cover_type] ?? '')),
                 Tables\Columns\ColorColumn::make('ribbon_color')->label('Lent'),
+                Tables\Columns\IconColumn::make('model_glb')->label('AR')->boolean()->getStateUsing(fn (Xonca $r) => $r->hasAr()),
                 Tables\Columns\TextColumn::make('occasions.name')->label('Bayramlar')->badge()->toggleable(),
                 Tables\Columns\TextColumn::make('price')->label('Qiymət')->money('AZN')->sortable(),
                 Tables\Columns\TextColumn::make('stock')->label('Anbar')->suffix(' əd.')->sortable(),

@@ -1,6 +1,17 @@
 {
+  "_browser-CqDbEFy1.js": {
+    "file": "assets/browser-CqDbEFy1.js",
+    "name": "browser",
+    "isDynamicEntry": true
+  },
+  "node_modules/@google/model-viewer/lib/model-viewer.js": {
+    "file": "assets/model-viewer-CgrEId82.js",
+    "name": "model-viewer",
+    "src": "node_modules/@google/model-viewer/lib/model-viewer.js",
+    "isDynamicEntry": true
+  },
   "resources/css/app.css": {
-    "file": "assets/app-BGKB9O2Y.css",
+    "file": "assets/app--AmWR33B.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -9,18 +20,22 @@
     ]
   },
   "resources/js/admin.js": {
-    "file": "assets/admin-CcIK7bTI.js",
+    "file": "assets/admin-Cyl_rRMp.js",
     "name": "admin",
     "src": "resources/js/admin.js",
     "isEntry": true,
     "css": [
-      "assets/admin-BJ5hPX5e.css"
+      "assets/admin-BjRF3u_V.css"
     ]
   },
   "resources/js/app.js": {
-    "file": "assets/app-DxbbVLwV.js",
+    "file": "assets/app-BnP1Rr2G.js",
     "name": "app",
     "src": "resources/js/app.js",
-    "isEntry": true
+    "isEntry": true,
+    "dynamicImports": [
+      "node_modules/@google/model-viewer/lib/model-viewer.js",
+      "_browser-CqDbEFy1.js"
+    ]
   }
 }

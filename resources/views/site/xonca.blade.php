@@ -40,6 +40,18 @@
                         <x-tray-art :xonca="$xonca" />
                     @endif
                 </div>
+                @if ($xonca->hasAr())
+                    <button type="button" data-ar-open class="group mt-3 flex w-full items-center justify-between gap-6 bg-onyx px-6 py-5 text-left text-ivory transition hover:bg-onyx-3 sm:px-8">
+                        <span class="flex items-center gap-5">
+                            <svg class="size-9 shrink-0 text-gold-soft" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width=".9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12V6h6M30 6h6v6M36 28v6h-6M10 34H4v-6"/><path d="M11 25c0-6 4-11 9-11s9 5 9 11"/><ellipse cx="20" cy="26" rx="10" ry="2.6"/><path d="M20 14c-1.5-2.4-4.4-2-3.8-.5.5 1.2 2.4.7 3.8.5 1.4-2.4 4.3-2 3.8-.5-.5 1.2-2.4.7-3.8.5"/></svg>
+                            <span>
+                                <span class="block font-display text-2xl leading-tight">Evinizdə baxın</span>
+                                <span class="caps mt-1 block !text-[9px] text-ivory/50">Telefonun kamerası ilə · real ölçüdə</span>
+                            </span>
+                        </span>
+                        <span class="caps !text-[10px] text-gold-soft transition group-hover:translate-x-1">3D · AR →</span>
+                    </button>
+                @endif
                 @if (count($photos) > 1)
                     <div class="mt-3 grid grid-cols-5 gap-3">
                         @foreach ($photos as $p)
@@ -179,6 +191,36 @@
             </section>
         @endif
     </div>
+
+    @if ($xonca->hasAr())
+        {{-- 3D / AR: on a phone the camera puts the xonça on the floor or a table at its real size;
+             on a computer it can be turned with the mouse and a QR code carries it to the phone. --}}
+        <div data-ar-modal data-glb="{{ $xonca->glbUrl() }}" data-usdz="{{ $xonca->usdzUrl() }}" data-size="{{ $xonca->size_cm }}" data-name="{{ $xonca->name }}" data-url="{{ route('xonca', $xonca) }}?ar=1"
+             class="fixed inset-0 z-[60] hidden bg-onyx text-ivory" role="dialog" aria-modal="true" aria-label="{{ $xonca->name }} — 3D">
+            <div class="flex h-full flex-col lg:flex-row">
+                <div class="relative min-h-0 flex-1" data-ar-stage>
+                    <div data-ar-loading class="caps absolute inset-0 grid place-items-center !text-[10px] text-ivory/40">3D model yüklənir…</div>
+                </div>
+                <aside class="flex shrink-0 flex-col justify-between border-t border-ivory/10 p-6 sm:p-8 lg:w-[26rem] lg:border-t-0 lg:border-l lg:p-12">
+                    <div>
+                        <div class="caps !text-[10px] text-gold-soft">Artırılmış reallıq</div>
+                        <h2 class="mt-4 font-display text-4xl leading-tight lg:text-5xl">{{ $xonca->name }} <em class="text-gold-soft">evinizdə</em></h2>
+                        <p class="mt-5 text-sm leading-relaxed text-ivory/60 max-lg:hidden">Telefonu bu koda tutun — kamera açılacaq və xonçanı masanıza və ya döşəməyə, real ölçüdə ({{ $xonca->size_cm }} sm) qoya biləcəksiniz. Ətrafında gəzin, yaxınlaşın — xonça yerində qalır.</p>
+                        <p class="mt-4 text-sm leading-relaxed text-ivory/60 lg:hidden">Düyməni basın, telefonu yavaşca döşəməyə və ya masaya tutun. Xonça görünəndə barmağınızla yerini dəyişə, çevirə bilərsiniz. Ətrafında gəzin — xonça yerində qalır.</p>
+                    </div>
+                    <div class="mt-8">
+                        <div class="hidden lg:block">
+                            <div data-ar-qr class="size-44 bg-ivory p-3"></div>
+                            <p class="caps mt-4 !text-[9px] text-ivory/40">Telefonun kamerası ilə skan edin</p>
+                        </div>
+                        <button type="button" data-ar-camera class="btn btn-gold w-full lg:hidden">Kameranı aç</button>
+                        <p data-ar-unsupported class="mt-4 hidden text-xs text-ivory/50 lg:!hidden">Bu cihaz kameralı baxışı dəstəkləmir — 3D modeli barmaqla fırladıb baxa bilərsiniz.</p>
+                        <button type="button" data-ar-close class="link-line mt-8 text-ivory/60">Bağla</button>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    @endif
 
     {{-- Phone: price and the button stay at hand --}}
     <div class="fixed inset-x-0 bottom-0 z-30 border-t border-ink/10 bg-ivory/95 backdrop-blur lg:hidden" style="padding-bottom: env(safe-area-inset-bottom)">

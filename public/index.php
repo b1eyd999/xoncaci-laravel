@@ -7,8 +7,9 @@ define('LARAVEL_START', microtime(true));
 
 // On the server this folder is copied into public_html/xoncaci.az and the
 // application lives beside public_html in xonca-laravel; locally it is the
-// usual ../ . Whichever exists is the one in use.
-$app_path = is_dir(__DIR__.'/../vendor') ? __DIR__.'/..' : __DIR__.'/../../xonca-laravel';
+// usual ../ . The server path is tried first: public_html has a vendor
+// folder of its own (darkframe's), so "../vendor exists" proves nothing.
+$app_path = is_file(__DIR__.'/../../xonca-laravel/bootstrap/app.php') ? __DIR__.'/../../xonca-laravel' : __DIR__.'/..';
 
 // Determine if the application is in maintenance mode...
 if (file_exists($maintenance = $app_path.'/storage/framework/maintenance.php')) {

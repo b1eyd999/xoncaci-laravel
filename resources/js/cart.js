@@ -87,3 +87,10 @@ export async function post(url, body) {
     const data = await res.json().catch(() => ({}));
     return { ok: res.ok, status: res.status, data };
 }
+
+/** A sentence in the page's language, with :name style placeholders filled. */
+export function t(key, vars = {}) {
+    let text = (window.XONCA?.t || {})[key] ?? key;
+    for (const [k, v] of Object.entries(vars)) text = text.replaceAll(`:${k}`, v);
+    return text;
+}

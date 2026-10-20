@@ -1,4 +1,4 @@
-@extends('layouts.site', ['title' => 'Sifariş ' . $booking->code])
+@extends('layouts.site', ['title' => __('Sifariş') . ' ' . $booking->code])
 @php($money = fn ($v) => \App\Support\Money::format($v))
 
 @push('head')
@@ -8,43 +8,40 @@
 @section('content')
     <section class="bg-ivory py-20 lg:py-28">
         <div class="container-x max-w-3xl text-center">
-            <svg viewBox="0 0 80 16" class="mx-auto h-4 text-gold" fill="none" stroke="currentColor" stroke-width=".8"><path d="M0 8h30M50 8h30"/><path d="M40 2l6 6-6 6-6-6z"/></svg>
-            <div class="caps mt-10 text-gold-deep">Sifariş qəbul olundu</div>
-            <h1 class="hero-in mt-6 font-display text-5xl leading-tight lg:text-7xl">Təşəkkür edirik, <em class="text-gold-deep">{{ $booking->customer_name }}</em></h1>
-            <p class="mx-auto mt-6 max-w-md text-taupe">Tezliklə {{ $booking->phone }} nömrəsinə zəng edib sifarişinizi təsdiqləyəcəyik.</p>
-            <div class="caps mt-10 inline-block border border-gold/40 px-8 py-4 !tracking-[0.4em] text-ink">{{ $booking->code }}</div>
+            <svg viewBox="0 0 16 16" class="mx-auto h-3 text-gold" fill="none" stroke="currentColor" stroke-width="1"><path d="M8 1l7 7-7 7-7-7z"/></svg>
+            <div class="caps mt-10 text-gold-deep">{{ __('Sifariş qəbul olundu') }}</div>
+            <h1 class="hero-in mt-6 font-display text-4xl leading-tight lg:text-6xl">{{ __('Təşəkkür edirik') }}, <em class="text-gold-deep">{{ $booking->customer_name }}</em></h1>
+            <p class="mx-auto mt-6 max-w-md text-taupe">{{ __('Tezliklə :phone nömrəsinə zəng edib sifarişinizi təsdiqləyəcəyik.', ['phone' => $booking->phone]) }}</p>
+            <div class="caps mt-10 inline-block bg-pearl px-8 py-4 !tracking-[0.35em] text-ink">{{ $booking->code }}</div>
         </div>
 
         <div class="container-x mt-20 max-w-3xl">
-            <dl class="grid gap-8 border-y border-ink/10 py-8 sm:grid-cols-3">
-                <div><dt class="field-label">Məclis</dt><dd class="font-display text-xl">{{ $booking->event_date->translatedFormat('j F Y') }}{{ $booking->event_time ? ', ' . $booking->event_time : '' }}</dd></div>
-                <div><dt class="field-label">Çatdırılma</dt><dd class="font-display text-xl">{{ $booking->delivery_type === 'pickup' ? 'Özünüz götürürsünüz' : ($booking->district ?: 'Ünvana') }}</dd></div>
-                <div><dt class="field-label">Status</dt><dd class="font-display text-xl">{{ $booking->statusLabel() }}</dd></div>
+            <dl class="grid gap-6 sm:grid-cols-3">
+                <div class="bg-pearl p-6"><dt class="field-label">{{ __('Məclis') }}</dt><dd class="font-display text-lg">{{ $booking->event_date->translatedFormat('j F Y') }}{{ $booking->event_time ? ', ' . $booking->event_time : '' }}</dd></div>
+                <div class="bg-pearl p-6"><dt class="field-label">{{ __('Çatdırılma') }}</dt><dd class="font-display text-lg">{{ $booking->delivery_type === 'pickup' ? __('Özünüz götürürsünüz') : ($booking->district ? __($booking->district) : __('Ünvana')) }}</dd></div>
+                <div class="bg-pearl p-6"><dt class="field-label">{{ __('Status') }}</dt><dd class="font-display text-lg">{{ __($booking->statusLabel()) }}</dd></div>
             </dl>
-            <ul class="mt-4">
+            <ul class="mt-6 space-y-3">
                 @foreach ($booking->items as $item)
-                    <li class="flex items-start justify-between gap-6 border-b border-ink/10 py-6">
+                    <li class="flex items-start justify-between gap-6 bg-pearl p-6">
                         <div>
-                            <div class="font-display text-2xl">{{ $item->xonca_name }}</div>
-                            <div class="caps mt-2 !text-[9px] text-taupe">{{ \App\Models\BookingItem::FILL_MODES[$item->fill_mode] ?? '' }}</div>
-                            @if ($item->fill)
-                                <div class="mt-2 text-sm text-mist">{{ $item->fillSummary() }}</div>
-                            @endif
+                            <div class="font-display text-xl">{{ $item->xonca?->tr('name') ?? $item->xonca_name }}</div>
+                            <div class="caps mt-2 !text-[9px] text-taupe">{{ __(\App\Models\BookingItem::FILL_MODES[$item->fill_mode] ?? '') }}</div>
                         </div>
-                        <div class="font-display text-xl whitespace-nowrap">{{ $money($item->price + $item->fill_total) }}</div>
+                        <div class="font-display text-lg whitespace-nowrap">{{ $money($item->price + $item->fill_total) }}</div>
                     </li>
                 @endforeach
             </ul>
-            <dl class="mt-6 ml-auto max-w-xs space-y-2 text-sm">
-                <div class="flex justify-between text-taupe"><dt>Çatdırılma</dt><dd>{{ $money($booking->delivery_fee) }}</dd></div>
-                <div class="flex items-baseline justify-between pt-2"><dt class="caps">Cəmi</dt><dd class="font-display text-3xl">{{ $money($booking->total) }}</dd></div>
+            <dl class="mt-8 ml-auto max-w-xs space-y-2 text-sm">
+                <div class="flex justify-between text-taupe"><dt>{{ __('Çatdırılma') }}</dt><dd>{{ $money($booking->delivery_fee) }}</dd></div>
+                <div class="flex items-baseline justify-between pt-2"><dt class="caps">{{ __('Cəmi') }}</dt><dd class="font-display text-3xl">{{ $money($booking->total) }}</dd></div>
                 @if ($booking->deposit_total > 0)
-                    <div class="flex justify-between text-mist"><dt>Depozit · qaytarılır</dt><dd>{{ $money($booking->deposit_total) }}</dd></div>
+                    <div class="flex justify-between text-mist"><dt>{{ __('Depozit, geri qaytarılır') }}</dt><dd>{{ $money($booking->deposit_total) }}</dd></div>
                 @endif
             </dl>
             <div class="mt-16 flex flex-wrap justify-center gap-4">
-                <a href="{{ route('home') }}" class="btn btn-line">Ana səhifə</a>
-                <a href="https://wa.me/{{ \App\Models\Setting::get('whatsapp') }}?text={{ rawurlencode('Salam! Sifarişim: ' . $booking->code) }}" target="_blank" rel="noopener" class="btn btn-dark">WhatsApp-da yazın</a>
+                <a href="{{ route('home') }}" class="btn btn-line">{{ __('Ana səhifə') }}</a>
+                <a href="https://wa.me/{{ \App\Models\Setting::get('whatsapp') }}?text={{ rawurlencode(__('Salam! Sifarişim: :code', ['code' => $booking->code])) }}" target="_blank" rel="noopener" class="btn btn-dark">{{ __('WhatsApp ilə yazın') }}</a>
             </div>
         </div>
     </section>

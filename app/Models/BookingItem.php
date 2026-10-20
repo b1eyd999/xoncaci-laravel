@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class BookingItem extends Model
 {
     public const FILL_MODES = [
-        'ours' => 'Bizim doldurduğumuz kimi',
-        'custom' => 'Müştəri saytda özü seçib',
-        'empty' => 'Boş — müştəri özü dolduracaq',
+        'ours' => 'Ustalarımızın dolduruşu',
+        'custom' => 'Öz seçimi',
+        'empty' => 'Boş xonça',
     ];
 
     protected $guarded = [];

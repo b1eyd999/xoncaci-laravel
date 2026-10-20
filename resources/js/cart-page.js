@@ -1,9 +1,9 @@
-import { cart, money, post } from './cart.js';
+import { cart, money, post, t } from './cart.js';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
-const MODES = { ours: 'Ustalarımızın dolduruşu', custom: 'Öz seçimim', empty: 'Boş xonça' };
+const MODES = { ours: t('mode.ours'), custom: t('mode.custom'), empty: t('mode.empty') };
 
 export function initCartPage() {
     const root = $('[data-cart-page]');
@@ -28,7 +28,7 @@ export function initCartPage() {
             const price = q ? q.price + q.fill_total : l.estimate;
             const taken = q && q.free !== null && q.free !== undefined && lines.slice(0, i + 1).filter((x) => x.xonca_id === l.xonca_id).length > q.free;
             const warn = q && q.free !== null && q.free !== undefined
-                ? `<div class="caps mt-3 !text-[9px] ${taken ? 'text-wine' : 'text-gold-deep'}">${taken ? 'Bu tarixə boş deyil' : 'Tarixə boşdur'}</div>`
+                ? `<div class="caps mt-3 !text-[9px] ${taken ? 'text-wine' : 'text-gold-deep'}">${taken ? t('line_taken') : t('line_free')}</div>`
                 : '';
             const pic = l.photo
                 ? `<img src="${l.photo}" alt="" class="size-full object-cover">`
@@ -46,9 +46,9 @@ export function initCartPage() {
                     ${fill ? `<div class="mt-2 line-clamp-2 text-sm text-mist">${fill}</div>` : ''}
                     ${warn}
                     <div class="mt-4 flex gap-6">
-                        <a href="/xonca/${l.slug}?edit=${l.uid}" class="link-line !text-[9px]">Dəyiş</a>
-                        <button type="button" data-dup="${l.uid}" class="link-line !text-[9px] text-taupe">Eynisindən</button>
-                        <button type="button" data-del="${l.uid}" class="link-line !text-[9px] text-mist">Sil</button>
+                        <a href="/xonca/${l.slug}?edit=${l.uid}" class="link-line !text-[9px]">${t('edit')}</a>
+                        <button type="button" data-dup="${l.uid}" class="link-line !text-[9px] text-taupe">${t('duplicate')}</button>
+                        <button type="button" data-del="${l.uid}" class="link-line !text-[9px] text-mist">${t('remove')}</button>
                     </div>
                 </div>
             </li>`;
@@ -77,15 +77,15 @@ export function initCartPage() {
         quote = data;
         for (const k of ['xonca_total', 'fill_total', 'delivery_fee', 'total', 'deposit_total']) {
             const el = $(`[data-q="${k}"]`, form);
-            if (el) el.textContent = k === 'delivery_fee' && data[k] === 0 ? (deliveryType() === 'pickup' ? '—' : 'Pulsuz') : money(data[k]);
+            if (el) el.textContent = k === 'delivery_fee' && data[k] === 0 ? (deliveryType() === 'pickup' ? '0 ₼' : t('free_delivery')) : money(data[k]);
         }
         const free = $('[data-free-note]', form);
         const sub = data.xonca_total + data.fill_total;
         if (deliveryType() === 'delivery' && X.freeDeliveryFrom > 0) {
             free.classList.remove('hidden');
             free.textContent = sub >= X.freeDeliveryFrom
-                ? 'Çatdırılma pulsuzdur.'
-                : `Daha ${money(X.freeDeliveryFrom - sub)} — çatdırılma pulsuz olacaq`;
+                ? t('delivery_is_free')
+                : t('delivery_left', { sum: money(X.freeDeliveryFrom - sub) });
         } else {
             free.classList.add('hidden');
         }
@@ -95,7 +95,7 @@ export function initCartPage() {
             const bad = data.lines.some((q, i) => q.free !== null && lines.slice(0, i + 1).filter((x) => x.xonca_id === lines[i].xonca_id).length > q.free);
             availNote.classList.remove('hidden');
             availNote.className = `mt-4 text-sm ${bad ? 'text-wine' : 'text-gold-deep'}`;
-            availNote.textContent = bad ? 'Bəzi xonçalar bu tarixə boş deyil — onları dəyişin və ya başqa tarix seçin.' : 'Bütün xonçalar bu tarixə boşdur.';
+            availNote.textContent = bad ? t('some_taken') : t('all_free');
         }
         render();
     }
@@ -135,7 +135,7 @@ export function initCartPage() {
         box.classList.add('hidden');
         $$('.field', form).forEach((i) => i.classList.remove('!border-wine'));
         btn.disabled = true;
-        btn.textContent = 'Göndərilir…';
+        btn.textContent = t('sending');
         const body = Object.fromEntries(new FormData(form).entries());
         body.cart = cart.payload();
         const { ok, status, data } = await post(X.routes.store, body);
@@ -150,8 +150,8 @@ export function initCartPage() {
             return;
         }
         btn.disabled = false;
-        btn.textContent = 'Sifarişi göndər';
-        const errors = data.errors || { _: [status === 429 ? 'Çox tez-tez cəhd edirsiniz, bir dəqiqə gözləyin.' : 'Xəta baş verdi, yenidən cəhd edin.'] };
+        btn.textContent = t('send');
+        const errors = data.errors || { _: [status === 429 ? t('too_many') : t('error')] };
         Object.keys(errors).forEach((k) => form.elements[k]?.classList?.add('!border-wine'));
         box.innerHTML = Object.values(errors).flat().map((m) => `<div>${m}</div>`).join('');
         box.classList.remove('hidden');

@@ -1,10 +1,11 @@
-@extends('layouts.site', ['title' => $xonca->name, 'description' => $xonca->short_description])
+@extends('layouts.site', ['title' => $xonca->tr('name'), 'description' => $xonca->tr('short_description')])
 @php
     use App\Support\Img;
     use App\Support\Money;
     $photos = $xonca->images ?? [];
     $ours = $xonca->defaultFills->filter(fn ($f) => $f->item && $f->item->is_active);
     $oursTotal = $ours->sum(fn ($f) => $f->item->price * $f->qty);
+    $name = $xonca->tr('name');
 @endphp
 
 @push('head')
@@ -22,19 +23,19 @@
     <div data-builder class="bg-ivory pb-36 lg:pb-32">
         <div class="container-x pt-8 lg:pt-12">
             <nav class="caps !text-[10px] text-mist">
-                <a href="{{ route('home') }}" class="hover:text-ink">Ana səhifə</a> <span class="mx-2">/</span>
-                <a href="{{ route('catalog') }}" class="hover:text-ink">Kolleksiya</a> <span class="mx-2">/</span>
-                <span class="text-taupe">{{ $xonca->name }}</span>
+                <a href="{{ route('home') }}" class="hover:text-ink">{{ __('Ana səhifə') }}</a> <span class="mx-2">/</span>
+                <a href="{{ route('catalog') }}" class="hover:text-ink">{{ __('Kolleksiya') }}</a> <span class="mx-2">/</span>
+                <span class="text-taupe">{{ $name }}</span>
             </nav>
         </div>
 
         <div class="container-x mt-8 grid gap-12 lg:mt-12 lg:grid-cols-[1.15fr_1fr] lg:gap-20 xl:gap-28">
             {{-- GALLERY --}}
             <div class="lg:sticky lg:top-32 lg:self-start">
-                <div class="relative -mx-5 aspect-[4/5] overflow-hidden bg-sand sm:mx-0" data-gallery-main>
+                <div class="relative -mx-5 aspect-[4/5] overflow-hidden bg-sand sm:mx-0">
                     @if ($photos)
                         @foreach ($photos as $p)
-                            <img src="{{ Img::url($p, 1400) }}" alt="{{ $xonca->name }}" data-gallery-slide="{{ $loop->index }}" class="absolute inset-0 size-full object-cover transition-opacity duration-700 {{ $loop->first ? '' : 'opacity-0' }}">
+                            <img src="{{ Img::url($p, 1400) }}" alt="{{ $name }}" data-gallery-slide="{{ $loop->index }}" class="absolute inset-0 size-full object-cover transition-opacity duration-700 {{ $loop->first ? '' : 'opacity-0' }}">
                         @endforeach
                     @else
                         <x-tray-art :xonca="$xonca" />
@@ -43,13 +44,13 @@
                 @if ($xonca->hasAr())
                     <button type="button" data-ar-open class="group mt-3 flex w-full items-center justify-between gap-6 bg-onyx px-6 py-5 text-left text-ivory transition hover:bg-onyx-3 sm:px-8">
                         <span class="flex items-center gap-5">
-                            <svg class="size-9 shrink-0 text-gold-soft" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width=".9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12V6h6M30 6h6v6M36 28v6h-6M10 34H4v-6"/><path d="M11 25c0-6 4-11 9-11s9 5 9 11"/><ellipse cx="20" cy="26" rx="10" ry="2.6"/><path d="M20 14c-1.5-2.4-4.4-2-3.8-.5.5 1.2 2.4.7 3.8.5 1.4-2.4 4.3-2 3.8-.5-.5 1.2-2.4.7-3.8.5"/></svg>
+                            <svg class="size-9 shrink-0 text-gold-soft" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12V6h6M30 6h6v6M36 28v6h-6M10 34H4v-6"/><path d="M11 25c0-6 4-11 9-11s9 5 9 11"/><ellipse cx="20" cy="26" rx="10" ry="2.6"/></svg>
                             <span>
-                                <span class="block font-display text-2xl leading-tight">Evinizdə baxın</span>
-                                <span class="caps mt-1 block !text-[9px] text-ivory/50">Telefonun kamerası ilə · real ölçüdə</span>
+                                <span class="block font-display text-2xl leading-tight">{{ __('Evinizdə baxın') }}</span>
+                                <span class="caps mt-1 block !text-[9px] text-ivory/55">{{ __('Telefonun kamerası ilə, real ölçüdə') }}</span>
                             </span>
                         </span>
-                        <span class="caps !text-[10px] text-gold-soft transition group-hover:translate-x-1">3D · AR →</span>
+                        <span class="caps !text-[10px] text-gold-soft transition group-hover:translate-x-1">3D AR</span>
                     </button>
                 @endif
                 @if (count($photos) > 1)
@@ -65,32 +66,32 @@
 
             {{-- DETAILS & BUILDER --}}
             <div>
-                <div class="caps !text-[10px] text-gold-deep">N° {{ preg_replace('/\D+/', '', $xonca->code) }} <span class="mx-2 text-mist">·</span> {{ $xonca->occasions->pluck('name')->implode(' · ') }}</div>
-                <h1 class="mt-5 font-display text-6xl leading-none lg:text-7xl">{{ $xonca->name }}</h1>
+                <div class="caps !text-[10px] text-gold-deep">N° {{ preg_replace('/\D+/', '', $xonca->code) }}<span class="mx-3"></span>{{ $xonca->occasions->map(fn ($o) => $o->tr('name'))->implode(', ') }}</div>
+                <h1 class="mt-5 font-display text-5xl leading-[1.05] lg:text-6xl">{{ $name }}</h1>
                 <div class="mt-6 flex flex-wrap items-baseline gap-x-4 gap-y-1">
                     <span class="font-display text-3xl">{{ Money::format($xonca->price) }}</span>
-                    <span class="caps !text-[10px] text-mist">icarə · çatdırılma və geri alma ilə</span>
+                    <span class="caps !text-[10px] text-mist">{{ __('icarə, çatdırılma və geri alma ilə') }}</span>
                 </div>
-                <p class="mt-8 max-w-lg text-[17px] leading-relaxed text-taupe">{{ $xonca->description }}</p>
+                <p class="mt-8 max-w-lg text-[16px] leading-relaxed text-taupe">{{ $xonca->tr('description') }}</p>
 
-                <dl class="mt-10 grid grid-cols-3 border-y border-ink/10 py-6 text-center">
-                    @foreach ([['Forma', \App\Models\Xonca::SHAPES[$xonca->shape] ?? ''], ['Ölçü', $xonca->size_cm . ' sm'], ['Örtük', \App\Models\Xonca::COVERS[$xonca->cover_type] ?? '']] as [$k, $v])
-                        <div class="border-ink/10 [&:not(:first-child)]:border-l">
-                            <dt class="caps !text-[10px] text-mist">{{ $k }}</dt>
-                            <dd class="mt-2 font-display text-xl">{{ $v }}</dd>
+                <dl class="mt-10 grid grid-cols-3 gap-3 text-center">
+                    @foreach ([[__('Forma'), __(\App\Models\Xonca::SHAPES[$xonca->shape] ?? '')], [__('Ölçü'), $xonca->size_cm . ' ' . __('sm')], [__('Örtük'), __(\App\Models\Xonca::COVERS[$xonca->cover_type] ?? '')]] as [$k, $v])
+                        <div class="bg-pearl px-2 py-5">
+                            <dt class="caps !text-[9px] text-mist">{{ $k }}</dt>
+                            <dd class="mt-2 font-display text-lg">{{ $v }}</dd>
                         </div>
                     @endforeach
                 </dl>
 
-                {{-- I. Ribbon --}}
+                {{-- 1. Ribbon --}}
                 <section class="mt-14">
                     <div class="flex items-baseline justify-between">
-                        <h2 class="caps text-ink"><span class="mr-3 font-display text-base text-gold italic normal-case">I</span>Lentin rəngi</h2>
+                        <h2 class="caps text-ink"><span class="mr-3 font-display text-base text-gold italic normal-case">1</span>{{ __('Lentin rəngi') }}</h2>
                         <span data-ribbon-name class="font-display text-lg text-taupe italic"></span>
                     </div>
                     <div class="mt-6 flex flex-wrap gap-4" data-ribbons>
                         @foreach ($xonca->ribbonChoices() as $c)
-                            <button type="button" data-ribbon="{{ $c }}" aria-label="Lent {{ $c }}"
+                            <button type="button" data-ribbon="{{ $c }}" aria-label="{{ __('Lentin rəngi') }} {{ $c }}"
                                 class="grid size-11 place-items-center rounded-full ring-1 ring-transparent transition hover:ring-ink/30 data-[on]:ring-gold">
                                 <span class="size-8 rounded-full" style="background: {{ $c }}; box-shadow: inset 0 0 0 1px rgba(0,0,0,.12), inset 0 6px 10px rgba(255,255,255,.25)"></span>
                             </button>
@@ -98,91 +99,91 @@
                     </div>
                 </section>
 
-                {{-- II. Filling --}}
+                {{-- 2. Filling --}}
                 <section class="mt-14">
-                    <h2 class="caps text-ink"><span class="mr-3 font-display text-base text-gold italic normal-case">II</span>Dolduruş</h2>
-                    <div class="mt-6 border-t border-ink/10" data-modes>
+                    <h2 class="caps text-ink"><span class="mr-3 font-display text-base text-gold italic normal-case">2</span>{{ __('Dolduruş') }}</h2>
+                    <div class="mt-6 space-y-3" data-modes>
                         @foreach ([
-                            'ours' => ['Ustalarımızın dolduruşu', 'Kolleksiyadakı kimi, tam hazır gəlir', '+ ' . Money::format($oursTotal)],
-                            'custom' => ['Öz seçiminiz', 'Hər əşyanı özünüz seçin', 'seçimə görə'],
-                            'empty' => ['Boş xonça', 'İçini evdə özünüz doldurursunuz', $xonca->empty_discount > 0 ? '− ' . Money::format($xonca->empty_discount) : ''],
+                            'ours' => [__('Ustalarımızın dolduruşu'), __('Kolleksiyadakı kimi, tam hazır gəlir'), '+' . Money::format($oursTotal)],
+                            'custom' => [__('Öz seçiminiz'), __('Hər əşyanı özünüz seçin'), __('seçimə görə')],
+                            'empty' => [__('Boş xonça'), __('İçini evdə özünüz doldurursunuz'), $xonca->empty_discount > 0 ? __(':sum endirim', ['sum' => Money::format($xonca->empty_discount)]) : ''],
                         ] as $mode => [$t, $d, $p])
                             @continue($mode === 'custom' && ! $xonca->fill_allowed)
-                            <button type="button" data-mode="{{ $mode }}" class="group flex w-full items-center gap-5 border-b border-ink/10 py-5 text-left">
+                            <button type="button" data-mode="{{ $mode }}" class="group flex w-full items-center gap-5 bg-pearl px-5 py-5 text-left ring-1 ring-transparent transition data-[on]:ring-gold">
                                 <span class="grid size-5 shrink-0 place-items-center rounded-full ring-1 ring-ink/30 group-data-[on]:ring-gold">
                                     <span class="size-2.5 scale-0 rounded-full bg-gold transition group-data-[on]:scale-100"></span>
                                 </span>
                                 <span class="flex-1">
-                                    <span class="block font-display text-2xl leading-tight">{{ $t }}</span>
+                                    <span class="block font-display text-xl leading-tight">{{ $t }}</span>
                                     <span class="mt-1 block text-sm text-mist">{{ $d }}</span>
                                 </span>
-                                <span class="caps !text-[10px] whitespace-nowrap text-taupe">{{ $p }}</span>
+                                <span class="caps !text-[9px] whitespace-nowrap text-taupe">{{ $p }}</span>
                             </button>
                         @endforeach
                     </div>
 
                     <div data-pane="ours" class="mt-8">
-                        <ul class="grid gap-x-8 sm:grid-cols-2">
+                        <ul class="grid gap-x-8 gap-y-4 sm:grid-cols-2">
                             @forelse ($ours as $f)
-                                <li class="flex items-center gap-4 border-b border-ink/5 py-3">
+                                <li class="flex items-center gap-4">
                                     <span class="grid size-11 shrink-0 place-items-center rounded-full bg-pearl text-gold ring-1 ring-gold/25">{!! \App\Support\Icons::svg($f->item->model, 'size-6') !!}</span>
-                                    <span class="flex-1 text-sm">{{ $f->item->name }}</span>
-                                    <span class="caps !text-[10px] text-mist">× {{ $f->qty }}</span>
+                                    <span class="flex-1 text-sm">{{ $f->item->tr('name') }}</span>
+                                    <span class="caps !text-[10px] text-mist">{{ $f->qty }} {{ __('əd.') }}</span>
                                 </li>
                             @empty
-                                <li class="text-sm text-mist">Bu xonça dolduruşsuz təklif olunur.</li>
+                                <li class="text-sm text-mist">{{ __('Bu xonça dolduruşsuz təklif olunur.') }}</li>
                             @endforelse
                         </ul>
                     </div>
 
                     <div data-pane="custom" class="mt-8 hidden">
-                        <div class="scrollbar-none -mx-5 flex gap-6 overflow-x-auto px-5 sm:mx-0 sm:px-0" data-cats>
-                            <button type="button" data-cat="all" class="caps shrink-0 border-b border-transparent pb-2 !text-[10px] text-mist data-[on]:border-ink data-[on]:text-ink">Hamısı</button>
+                        <div class="scrollbar-none -mx-5 flex gap-2 overflow-x-auto px-5 sm:mx-0 sm:flex-wrap sm:px-0" data-cats>
+                            <button type="button" data-cat="all" class="caps shrink-0 bg-pearl px-4 py-2.5 !text-[9px] text-taupe data-[on]:bg-onyx data-[on]:text-ivory">{{ __('Hamısı') }}</button>
                             @foreach ($categories as $c)
-                                <button type="button" data-cat="{{ $c->id }}" class="caps shrink-0 border-b border-transparent pb-2 !text-[10px] text-mist data-[on]:border-ink data-[on]:text-ink">{{ $c->name }}</button>
+                                <button type="button" data-cat="{{ $c->id }}" class="caps shrink-0 bg-pearl px-4 py-2.5 !text-[9px] text-taupe data-[on]:bg-onyx data-[on]:text-ivory">{{ $c->tr('name') }}</button>
                             @endforeach
                         </div>
-                        <ul class="mt-4 grid gap-x-8 sm:grid-cols-2" data-item-grid></ul>
+                        <ul class="mt-6 grid gap-x-8 gap-y-3 sm:grid-cols-2" data-item-grid></ul>
                         <div class="mt-6 flex justify-end gap-6">
-                            <button type="button" data-fill-reset class="link-line !text-[10px] text-taupe">Hazırdan başla</button>
-                            <button type="button" data-fill-clear class="link-line !text-[10px] text-mist">Təmizlə</button>
+                            <button type="button" data-fill-reset class="link-line !text-[10px] text-taupe">{{ __('Hazırdan başla') }}</button>
+                            <button type="button" data-fill-clear class="link-line !text-[10px] text-mist">{{ __('Təmizlə') }}</button>
                         </div>
                     </div>
 
                     <div data-pane="empty" class="mt-8 hidden">
-                        <p class="border-l border-gold pl-6 font-display text-xl leading-relaxed text-taupe italic">Sini, tül və lentlər bəzədilmiş halda gəlir — içini öz əlinizlə, öz zövqünüzlə doldurursunuz.</p>
+                        <p class="bg-pearl px-6 py-5 font-display text-lg leading-relaxed text-taupe italic">{{ __('Sini, tül və lentlər bəzədilmiş halda gəlir. İçini öz əlinizlə, öz zövqünüzlə doldurursunuz.') }}</p>
                     </div>
                 </section>
 
-                {{-- III. Date --}}
+                {{-- 3. Date --}}
                 <section class="mt-14">
-                    <h2 class="caps text-ink"><span class="mr-3 font-display text-base text-gold italic normal-case">III</span>Məclisin tarixi</h2>
+                    <h2 class="caps text-ink"><span class="mr-3 font-display text-base text-gold italic normal-case">3</span>{{ __('Məclisin tarixi') }}</h2>
                     <input type="date" data-date min="{{ $earliest }}" class="field mt-4 max-w-xs">
-                    <p data-date-note class="mt-3 text-sm text-mist">Tarixi seçin — boş olub-olmadığını dərhal göstərəcəyik.</p>
+                    <p data-date-note class="mt-3 text-sm text-mist">{{ __('Tarixi seçin, xonçanın həmin gün boş olduğunu dərhal göstərəcəyik.') }}</p>
                 </section>
 
                 {{-- Summary --}}
-                <section class="mt-14 bg-pearl p-8 ring-1 ring-ink/5">
+                <section class="mt-14 bg-pearl p-8">
                     <dl class="space-y-3 text-sm">
-                        <div class="flex justify-between"><dt class="text-taupe">Xonça icarəsi</dt><dd data-sum-xonca></dd></div>
-                        <div class="flex justify-between"><dt class="text-taupe">Dolduruş</dt><dd data-sum-fill></dd></div>
+                        <div class="flex justify-between"><dt class="text-taupe">{{ __('Xonça icarəsi') }}</dt><dd data-sum-xonca></dd></div>
+                        <div class="flex justify-between"><dt class="text-taupe">{{ __('Dolduruş') }}</dt><dd data-sum-fill></dd></div>
                         @if ($xonca->deposit > 0)
-                            <div class="flex justify-between text-mist"><dt>Depozit · qaytarılır</dt><dd>{{ Money::format($xonca->deposit) }}</dd></div>
+                            <div class="flex justify-between text-mist"><dt>{{ __('Depozit, geri qaytarılır') }}</dt><dd>{{ Money::format($xonca->deposit) }}</dd></div>
                         @endif
                     </dl>
-                    <div class="mt-6 flex items-baseline justify-between border-t border-ink/10 pt-6">
-                        <span class="caps text-ink">Cəmi</span>
+                    <div class="mt-6 flex items-baseline justify-between pt-4">
+                        <span class="caps text-ink">{{ __('Cəmi') }}</span>
                         <span data-sum-total class="font-display text-4xl"></span>
                     </div>
-                    <button type="button" data-add class="btn btn-dark mt-8 hidden w-full lg:flex">Səbətə əlavə et</button>
-                    <p class="mt-5 text-center text-xs text-mist">İndi ödəniş yoxdur — sifarişdən sonra zəng edib təsdiqləyirik.</p>
+                    <button type="button" data-add class="btn btn-dark mt-8 hidden w-full lg:flex">{{ __('Səbətə əlavə et') }}</button>
+                    <p class="mt-5 text-center text-xs text-mist">{{ __('İndi ödəniş yoxdur. Sifarişdən sonra zəng edib təsdiqləyirik.') }}</p>
                 </section>
             </div>
         </div>
 
         @if ($similar->isNotEmpty())
-            <section class="container-x mt-32 border-t border-ink/10 pt-20">
-                <h2 class="text-center font-display text-5xl">Bunlar da <em class="text-gold-deep">xoşunuza gələ bilər</em></h2>
+            <section class="container-x mt-32 pt-8">
+                <h2 class="text-center font-display text-4xl lg:text-5xl">{{ __('Bunlar da') }} <em class="text-gold-deep">{{ __('xoşunuza gələ bilər') }}</em></h2>
                 <div class="mt-14 grid gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-4">
                     @foreach ($similar as $x)
                         @include('site.partials.card', ['xonca' => $x])
@@ -195,27 +196,27 @@
     @if ($xonca->hasAr())
         {{-- 3D / AR: on a phone the camera puts the xonça on the floor or a table at its real size;
              on a computer it can be turned with the mouse and a QR code carries it to the phone. --}}
-        <div data-ar-modal data-glb="{{ $xonca->glbUrl() }}" data-usdz="{{ $xonca->usdzUrl() }}" data-size="{{ $xonca->size_cm }}" data-name="{{ $xonca->name }}" data-url="{{ route('xonca', $xonca) }}?ar=1"
-             class="fixed inset-0 z-[60] hidden bg-onyx text-ivory" role="dialog" aria-modal="true" aria-label="{{ $xonca->name }} — 3D">
+        <div data-ar-modal data-glb="{{ $xonca->glbUrl() }}" data-usdz="{{ $xonca->usdzUrl() }}" data-size="{{ $xonca->size_cm }}" data-name="{{ $name }}" data-url="{{ route('xonca', $xonca) }}?ar=1&lang={{ app()->getLocale() }}"
+             class="fixed inset-0 z-[60] hidden bg-onyx text-ivory" role="dialog" aria-modal="true" aria-label="{{ $name }} 3D">
             <div class="flex h-full flex-col lg:flex-row">
                 <div class="relative min-h-0 flex-1" data-ar-stage>
-                    <div data-ar-loading class="caps absolute inset-0 grid place-items-center !text-[10px] text-ivory/40">3D model yüklənir…</div>
+                    <div data-ar-loading class="caps absolute inset-0 grid place-items-center !text-[10px] text-ivory/40">{{ __('3D model yüklənir…') }}</div>
                 </div>
-                <aside class="flex shrink-0 flex-col justify-between border-t border-ivory/10 p-6 sm:p-8 lg:w-[26rem] lg:border-t-0 lg:border-l lg:p-12">
+                <aside class="flex shrink-0 flex-col justify-between bg-onyx-2 p-6 sm:p-8 lg:w-[26rem] lg:p-12">
                     <div>
-                        <div class="caps !text-[10px] text-gold-soft">Artırılmış reallıq</div>
-                        <h2 class="mt-4 font-display text-4xl leading-tight lg:text-5xl">{{ $xonca->name }} <em class="text-gold-soft">evinizdə</em></h2>
-                        <p class="mt-5 text-sm leading-relaxed text-ivory/60 max-lg:hidden">Telefonu bu koda tutun — kamera açılacaq və xonçanı masanıza və ya döşəməyə, real ölçüdə ({{ $xonca->size_cm }} sm) qoya biləcəksiniz. Ətrafında gəzin, yaxınlaşın — xonça yerində qalır.</p>
-                        <p class="mt-4 text-sm leading-relaxed text-ivory/60 lg:hidden">Düyməni basın, telefonu yavaşca döşəməyə və ya masaya tutun. Xonça görünəndə barmağınızla yerini dəyişə, çevirə bilərsiniz. Ətrafında gəzin — xonça yerində qalır.</p>
+                        <div class="caps !text-[10px] text-gold-soft">{{ __('Artırılmış reallıq') }}</div>
+                        <h2 class="mt-4 font-display text-4xl leading-tight">{{ $name }} <em class="text-gold-soft">{{ __('evinizdə') }}</em></h2>
+                        <p class="mt-5 text-sm leading-relaxed text-ivory/65 max-lg:hidden">{{ __('Telefonu bu koda tutun. Kamera açılacaq və xonçanı masanıza və ya döşəməyə real ölçüdə (:size sm) qoya biləcəksiniz. Ətrafında gəzin, yaxınlaşın, xonça yerində qalır.', ['size' => $xonca->size_cm]) }}</p>
+                        <p class="mt-4 text-sm leading-relaxed text-ivory/65 lg:hidden">{{ __('Düyməni basın və telefonu yavaşca döşəməyə və ya masaya tutun. Xonça görünəndə barmağınızla yerini dəyişə, çevirə bilərsiniz. Ətrafında gəzin, xonça yerində qalır.') }}</p>
                     </div>
                     <div class="mt-8">
                         <div class="hidden lg:block">
                             <div data-ar-qr class="size-44 bg-ivory p-3"></div>
-                            <p class="caps mt-4 !text-[9px] text-ivory/40">Telefonun kamerası ilə skan edin</p>
+                            <p class="caps mt-4 !text-[9px] text-ivory/45">{{ __('Telefonun kamerası ilə skan edin') }}</p>
                         </div>
-                        <button type="button" data-ar-camera class="btn btn-gold w-full lg:hidden">Kameranı aç</button>
-                        <p data-ar-unsupported class="mt-4 hidden text-xs text-ivory/50 lg:!hidden">Bu cihaz kameralı baxışı dəstəkləmir — 3D modeli barmaqla fırladıb baxa bilərsiniz.</p>
-                        <button type="button" data-ar-close class="link-line mt-8 text-ivory/60">Bağla</button>
+                        <button type="button" data-ar-camera class="btn btn-gold w-full lg:hidden">{{ __('Kameranı aç') }}</button>
+                        <p data-ar-unsupported class="mt-4 hidden text-xs text-ivory/55 lg:!hidden">{{ __('Bu cihaz kameralı baxışı dəstəkləmir. 3D modeli barmaqla fırladıb baxa bilərsiniz.') }}</p>
+                        <button type="button" data-ar-close class="link-line mt-8 text-ivory/65">{{ __('Bağla') }}</button>
                     </div>
                 </aside>
             </div>
@@ -223,13 +224,13 @@
     @endif
 
     {{-- Phone: price and the button stay at hand --}}
-    <div class="fixed inset-x-0 bottom-0 z-30 border-t border-ink/10 bg-ivory/95 backdrop-blur lg:hidden" style="padding-bottom: env(safe-area-inset-bottom)">
+    <div class="fixed inset-x-0 bottom-0 z-30 bg-ivory/95 shadow-[0_-10px_30px_-20px_rgba(0,0,0,.35)] backdrop-blur lg:hidden" style="padding-bottom: env(safe-area-inset-bottom)">
         <div class="container-x flex items-center gap-5 py-3">
             <div>
-                <div class="caps !text-[9px] text-mist">Cəmi</div>
+                <div class="caps !text-[9px] text-mist">{{ __('Cəmi') }}</div>
                 <div data-sum-total class="font-display text-2xl leading-none"></div>
             </div>
-            <button type="button" data-add class="btn btn-dark flex-1 !px-4">Səbətə əlavə et</button>
+            <button type="button" data-add class="btn btn-dark flex-1 !px-4">{{ __('Səbətə əlavə et') }}</button>
         </div>
     </div>
 @endsection

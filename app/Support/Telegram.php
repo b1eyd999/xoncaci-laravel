@@ -48,7 +48,7 @@ class Telegram
     {
         $booking->loadMissing('items', 'occasion');
 
-        $lines = ['🎀 <b>Yeni sifariş ' . e($booking->code) . '</b>', ''];
+        $lines = ['🎀 <b>Yeni sifariş ' . e($booking->code) . '</b>' . ($booking->locale !== 'az' ? ' · ' . strtoupper($booking->locale) : ''), ''];
         foreach ($booking->items as $item) {
             $lines[] = '• <b>' . e($item->xonca_name) . '</b> — ' . Money::format($item->price)
                 . "\n   " . e(BookingItem::FILL_MODES[$item->fill_mode] ?? $item->fill_mode)

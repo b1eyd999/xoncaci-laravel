@@ -27,7 +27,7 @@ export function initAr() {
         viewer = document.createElement('model-viewer');
         Object.entries({
             src: modal.dataset.glb,
-            alt: `${modal.dataset.name} — 3D`,
+            alt: `${modal.dataset.name} 3D`,
             ar: '',
             'ar-modes': 'webxr scene-viewer quick-look',
             'ar-scale': 'fixed',
@@ -64,7 +64,7 @@ export function initAr() {
         });
         viewer.addEventListener('error', () => {
             const l = $('[data-ar-loading]', modal);
-            if (l) l.textContent = '3D model açılmadı — səhifəni yeniləyin.';
+            if (l) l.textContent = (window.XONCA?.t || {}).model_failed || '3D';
         });
         $('[data-ar-stage]', modal).appendChild(viewer);
         return viewer;

@@ -10,8 +10,8 @@
  * never as a fill, a light display serif and small tracked capitals.
  */
 @theme {
-    --font-sans: 'Jost', ui-sans-serif, system-ui, sans-serif;
-    --font-serif: 'Cormorant Garamond', 'Times New Roman', serif;
+    --font-sans: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
+    --font-serif: 'Playfair Display', Georgia, serif;
 
     --color-onyx: #0f0d0c;
     --color-onyx-2: #181513;
@@ -36,7 +36,7 @@
         -webkit-tap-highlight-color: transparent;
     }
     body {
-        @apply bg-ivory font-sans text-[15px] leading-relaxed font-light text-ink antialiased;
+        @apply bg-ivory font-sans text-[15px] leading-[1.75] font-normal text-ink antialiased;
     }
     ::selection {
         background: var(--color-gold-soft);
@@ -49,15 +49,15 @@
 
 @utility font-display {
     font-family: var(--font-serif);
-    font-weight: 300;
-    letter-spacing: -0.005em;
+    font-weight: 400;
+    letter-spacing: -0.01em;
 }
 
 @utility caps {
     font-family: var(--font-sans);
-    font-size: 11px;
-    font-weight: 400;
-    letter-spacing: 0.28em;
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
 }
 
@@ -82,7 +82,7 @@
 
 @layer components {
     .btn {
-        @apply inline-flex items-center justify-center gap-3 px-9 py-4 text-[11px] font-normal tracking-[0.28em] uppercase transition duration-500 select-none disabled:pointer-events-none disabled:opacity-40;
+        @apply inline-flex items-center justify-center gap-3 px-9 py-4 text-[11px] font-medium tracking-[0.2em] uppercase transition duration-500 select-none disabled:pointer-events-none disabled:opacity-40;
         transition-timing-function: var(--ease-lux);
     }
     .btn-dark {
@@ -98,7 +98,7 @@
         @apply border border-ivory/40 text-ivory hover:border-ivory hover:bg-ivory hover:text-onyx;
     }
     .link-line {
-        @apply relative inline-flex items-center gap-3 pb-1 text-[11px] tracking-[0.28em] uppercase;
+        @apply relative inline-flex items-center gap-3 pb-1 text-[11px] font-medium tracking-[0.2em] uppercase;
         background: linear-gradient(currentColor, currentColor) 0 100% / 100% 1px no-repeat;
         transition: background-size 0.5s var(--ease-lux);
     }
@@ -106,7 +106,7 @@
         background-size: 30% 1px;
     }
     .field {
-        @apply w-full border-0 border-b border-ink/20 bg-transparent px-0 pt-2 pb-3 text-[15px] font-light text-ink transition outline-none placeholder:text-mist focus:border-gold;
+        @apply w-full border-0 border-b border-ink/20 bg-transparent px-0 pt-2 pb-3 text-[15px] text-ink transition outline-none placeholder:text-mist focus:border-gold;
     }
     .field-label {
         @apply caps mb-1 block text-taupe;

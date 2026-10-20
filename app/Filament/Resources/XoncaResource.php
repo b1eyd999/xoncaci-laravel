@@ -6,6 +6,7 @@ use App\Filament\Resources\XoncaResource\Pages;
 use App\Models\FillItem;
 use App\Models\Xonca;
 use App\Support\Money;
+use App\Filament\Forms\Translations;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -115,6 +116,7 @@ class XoncaResource extends Resource
                         ->helperText('Birinci şəkil kataloqda göstərilir, ikincisi kartın üzərinə gələndə. Şaquli (4:5) şəkillər ən gözəl görünür. Şəkil yoxdursa, xonçanın qızılı xətt rəsmi göstərilir.'),
                 ]),
             ]),
+            Translations::make(['name' => 'Ad', 'short_description' => 'Qısa təsvir', 'description' => ['Ətraflı təsvir', 'textarea']])->columnSpanFull()->collapsed(),
 
         ]);
     }

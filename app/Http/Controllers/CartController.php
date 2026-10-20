@@ -64,15 +64,15 @@ class CartController extends Controller
             'address' => 'nullable|required_if:delivery_type,delivery|string|max:255',
             'note' => 'nullable|string|max:1000',
         ], [
-            'event_date.after_or_equal' => 'Bu tarixə artıq çatdıra bilmirik — ən tezi ' . Availability::earliest()->format('d.m.Y') . '.',
-            'phone.regex' => 'Telefon nömrəsini düzgün yazın.',
-            'district.required_if' => 'Rayonu seçin.',
-            'address.required_if' => 'Ünvanı yazın.',
+            'event_date.after_or_equal' => __('Bu tarixə artıq çatdıra bilmirik. Ən tezi :date.', ['date' => Availability::earliest()->format('d.m.Y')]),
+            'phone.regex' => __('Telefon nömrəsini düzgün yazın.'),
+            'district.required_if' => __('Rayonu seçin.'),
+            'address.required_if' => __('Ünvanı yazın.'),
         ]);
 
         $cart = $this->cart($request);
         if (! $cart) {
-            throw ValidationException::withMessages(['cart' => 'Səbət boşdur.']);
+            throw ValidationException::withMessages(['cart' => __('Səbət boşdur.')]);
         }
 
         $booking = DB::transaction(function () use ($data, $cart) {
@@ -85,7 +85,9 @@ class CartController extends Controller
                 $xonca = $lines->first()['xonca'];
                 $free = Availability::free($xonca, $data['event_date']);
                 if ($free < $lines->count()) {
-                    throw ValidationException::withMessages(['cart' => '«' . $xonca->name . '» bu tarixə ' . ($free ? "yalnız {$free} ədəd" : 'artıq') . ' boşdur. Başqa tarix və ya başqa xonça seçin.']);
+                    throw ValidationException::withMessages(['cart' => $free
+                        ? __('«:name» bu tarixə yalnız :n ədəd boşdur. Başqa tarix və ya başqa xonça seçin.', ['name' => $xonca->tr('name'), 'n' => $free])
+                        : __('«:name» bu tarixə artıq tutulub. Başqa tarix və ya başqa xonça seçin.', ['name' => $xonca->tr('name')])]);
                 }
             }
 
@@ -96,6 +98,7 @@ class CartController extends Controller
                 'deposit_total' => $quote->depositTotal,
                 'total' => $quote->total,
                 'status' => 'new',
+                'locale' => app()->getLocale(),
             ]);
 
             foreach ($quote->lines as $line) {

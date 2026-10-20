@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\FaqResource\Pages;
 use App\Models\Faq;
+use App\Filament\Forms\Translations;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -28,6 +29,7 @@ class FaqResource extends Resource
             Forms\Components\TextInput::make('question')->label('Sual')->required(),
             Forms\Components\Textarea::make('answer')->label('Cavab')->required()->rows(4),
             Forms\Components\Toggle::make('is_active')->label('Saytda görünsün')->default(true),
+            Translations::make(['question' => 'Sual', 'answer' => ['Cavab', 'textarea']])->columnSpanFull()->collapsed(),
         ]);
     }
 

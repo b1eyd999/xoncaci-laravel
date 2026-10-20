@@ -26,9 +26,17 @@ class Setting extends Model
         'whatsapp' => '994500000000',
         'instagram' => 'xoncaci.az',
         'address' => 'Bakı şəhəri',
-        'working_hours' => 'Hər gün 09:00 – 21:00',
-        'hero_title' => 'Ən xoş gününüz üçün — zərif xonçalar',
-        'hero_subtitle' => 'Toy, nişan və xınayaxdı üçün əl ilə bəzədilmiş xonçaların icarəsi. İçini özünüz seçin — biz gətirir, qurur və məclisdən sonra özümüz götürürük.',
+        'working_hours' => 'Hər gün 09:00-dan 21:00-dək',
+        'hero_title' => 'Ən xoş gününüz üçün | zərif xonçalar',
+        'hero_title_ru' => 'Для самого счастливого дня | изысканные хончи',
+        'hero_title_en' => 'For your happiest day | exquisite khonchas',
+        'hero_subtitle' => 'Toy, nişan və xınayaxdı üçün əl ilə bəzədilmiş xonçaların icarəsi. İçini özünüz seçin, biz gətirir, qurur və məclisdən sonra özümüz götürürük.',
+        'hero_subtitle_ru' => 'Аренда хонч ручной работы для свадьбы, помолвки и хынаяхды. Наполнение выбираете вы, а мы привозим, оформляем и забираем после торжества.',
+        'hero_subtitle_en' => 'Hand-dressed khonchas to rent for weddings, engagements and henna nights. You choose what goes inside; we deliver, set them up and collect them afterwards.',
+        'address_ru' => 'Баку',
+        'address_en' => 'Baku',
+        'working_hours_ru' => 'Ежедневно с 09:00 до 21:00',
+        'working_hours_en' => 'Daily, 9 am to 9 pm',
         'hero_image' => '',
         'craft_image' => '',
         'cta_image' => '',
@@ -55,6 +63,20 @@ class Setting extends Model
     {
         static::updateOrCreate(['key' => $key], ['value' => $value]);
         Cache::forget('settings');
+    }
+
+    /** The Russian or English copy of a text setting, Azerbaijani if there is none. */
+    public static function local(string $key): mixed
+    {
+        $locale = app()->getLocale();
+        if ($locale !== 'az') {
+            $value = static::get($key . '_' . $locale);
+            if (filled($value)) {
+                return $value;
+            }
+        }
+
+        return static::get($key);
     }
 
     /** @return list<string> */

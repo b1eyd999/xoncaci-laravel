@@ -1,12 +1,8 @@
-import { cart, money, toast } from './cart.js';
+import { cart, money, toast, t } from './cart.js';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
-const RIBBON_NAMES = {
-    '#6e1a26': 'Bordo', '#c2a064': 'Şampan qızılı', '#e6c7c2': 'Pudra', '#f4eee4': 'Fil sümüyü', '#1f4a3d': 'Zümrüd',
-    '#1c2340': 'Gecə mavisi', '#8e3a4a': 'Moruq', '#5a1a2a': 'Albalı', '#7a1f2b': 'Nar', '#ffffff': 'Ağ', '#d4af37': 'Qızılı',
-};
 
 /** The item's picture: the owner's photo if there is one, else its line drawing. */
 function picture(item) {
@@ -53,7 +49,8 @@ export function initBuilder() {
     /* ---------- ribbon */
     function renderRibbon() {
         $$('[data-ribbon]', root).forEach((b) => b.toggleAttribute('data-on', b.dataset.ribbon === state.ribbon));
-        $('[data-ribbon-name]', root).textContent = RIBBON_NAMES[state.ribbon.toLowerCase()] || '';
+        const name = t(`ribbon.${state.ribbon.toLowerCase()}`);
+        $('[data-ribbon-name]', root).textContent = name.startsWith('ribbon.') ? '' : name;
     }
     $$('[data-ribbon]', root).forEach((b) =>
         b.addEventListener('click', () => {
@@ -105,7 +102,7 @@ export function initBuilder() {
         const it = items[id];
         const q = state.fill.get(id) || 0;
         if (b.dataset.inc) {
-            if (q >= it.max) return toast(`«${it.name}» — ən çox ${it.max} ədəd`);
+            if (q >= it.max) return toast(t('max', { name: it.name, n: it.max }));
             state.fill.set(id, q + 1);
         } else {
             q <= 1 ? state.fill.delete(id) : state.fill.set(id, q - 1);
@@ -133,7 +130,7 @@ export function initBuilder() {
     /* ---------- summary */
     function renderSummary() {
         $$('[data-sum-xonca]').forEach((el) => (el.textContent = money(xoncaPrice())));
-        $$('[data-sum-fill]').forEach((el) => (el.textContent = state.mode === 'empty' ? '—' : money(fillTotal())));
+        $$('[data-sum-fill]').forEach((el) => (el.textContent = state.mode === 'empty' ? money(0) : money(fillTotal())));
         $$('[data-sum-total]').forEach((el) => (el.textContent = money(xoncaPrice() + fillTotal())));
     }
 
@@ -152,12 +149,12 @@ export function initBuilder() {
         } catch {
             /* ignore */
         }
-        if (d < X.earliest) return say('Bu tarixə hazırlamağa vaxt qalmır — bir az gec bir gün seçin.', 'bad');
-        if ((X.busy || []).includes(d)) return say('Bu xonça həmin günə artıq rezerv olunub.', 'bad');
-        say('Yoxlanılır…');
+        if (d < X.earliest) return say(t('too_soon'), 'bad');
+        if ((X.busy || []).includes(d)) return say(t('taken'), 'bad');
+        say(t('checking'));
         const res = await fetch(`${X.routes.availability}?xonca=${xonca.id}&date=${d}`, { headers: { Accept: 'application/json' } }).then((r) => r.json()).catch(() => null);
         if (!res) return;
-        res.free ? say('Bu tarixə boşdur.', 'ok') : say('Bu xonça həmin günə artıq rezerv olunub.', 'bad');
+        res.free ? say(t('free'), 'ok') : say(t('taken'), 'bad');
     }
     if (dateInput) {
         let saved = '';
@@ -175,7 +172,7 @@ export function initBuilder() {
     $$('[data-add]').forEach((b) =>
         b.addEventListener('click', () => {
             if (state.mode === 'custom' && !currentFill().length) {
-                toast('Heç nə seçməmisiniz — əşya əlavə edin və ya «Boş xonça»nı seçin');
+                toast(t('nothing_chosen'));
                 return;
             }
             const line = {
@@ -195,10 +192,10 @@ export function initBuilder() {
                 return;
             }
             cart.add(line);
-            toast(`«${xonca.name}» səbətə əlavə olundu <a href="${X.routes.cart}" class="ml-5 border-b border-gold-soft pb-0.5 text-gold-soft">Səbətə keç</a>`, 5000);
+            toast(`${t('added', { name: xonca.name })} <a href="${X.routes.cart}" class="ml-5 border-b border-gold-soft pb-0.5 text-gold-soft">${t('to_cart')}</a>`, 5000);
         }),
     );
-    if (existing) $$('[data-add]').forEach((b) => (b.textContent = 'Dəyişikliyi saxla'));
+    if (existing) $$('[data-add]').forEach((b) => (b.textContent = t('save_changes')));
 
     renderRibbon();
     renderMode();

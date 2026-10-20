@@ -49,7 +49,7 @@ class DatabaseSeeder extends Seeder
             ['sirniyyat', 'Konfet qabı', 'sweets_bowl', 16, '#e84a5f', '#ffd166', 3, 1],
             ['sirniyyat', 'Şokolad (ürək qutu)', 'chocolate', 22, '#6e1a26', '#d4af37', 4, 1],
             ['sirniyyat', 'Üçmərtəbəli tort', 'cake', 45, '#fbf3ea', '#d4af37', 1, 1],
-            ['sirniyyat', 'Qoz-fındıq', 'nuts_bowl', 12, '#8b5a2b', '#d4af37', 3, 1],
+            ['sirniyyat', 'Qoz və fındıq', 'nuts_bowl', 12, '#8b5a2b', '#d4af37', 3, 1],
             ['meyve', 'Nar', 'pomegranate', 2, '#7a1f2b', '#7d1020', 12, 1],
             ['meyve', 'Qırmızı alma', 'apple', 1.5, '#c0392b', '#3f8f3a', 12, 1],
             ['meyve', 'Yaşıl alma', 'apple', 1.5, '#8dc63f', '#3f8f3a', 12, 1],
@@ -106,7 +106,7 @@ class DatabaseSeeder extends Seeder
                 [['Konfet qabı', 1], ['Hədiyyə qutusu', 2], ['Ətir', 2], ['Gül dəstəsi', 1]]],
             ['XN-010', 'Çay Süfrəsi', 'rect', 'klassik', 60, '#c9a14a', '#e8c77a', 'none', '#ffffff', '#1f4a3d', 40, 20, 2, false, ['soz-kesme'],
                 'Söz kəsmə üçün: çay, qənd, şirniyyat və qoz-fındıq.',
-                [['Çay qutusu', 2], ['Kəllə qənd', 1], ['Qoz-fındıq', 1], ['Şəkərbura', 1], ['Bakı paxlavası', 1]]],
+                [['Çay qutusu', 2], ['Kəllə qənd', 1], ['Qoz və fındıq', 1], ['Şəkərbura', 1], ['Bakı paxlavası', 1]]],
             ['XN-011', 'Ağ Qu', 'oval', 'lux', 65, '#dcdcdc', '#ffffff', 'glass', '#ffffff', '#ffffff', 80, 40, 1, false, ['toy', 'nisan'],
                 'Ağ və gümüşü, şüşə gümbəz altında tort və şamlar.',
                 [['Üçmərtəbəli tort', 1], ['Ağ şam', 4], ['Gül dəstəsi', 1]]],
@@ -155,5 +155,7 @@ class DatabaseSeeder extends Seeder
                 Faq::create(['question' => $q, 'answer' => $a, 'sort' => $i]);
             }
         }
+
+        \App\Support\CatalogText::apply();
     }
 }

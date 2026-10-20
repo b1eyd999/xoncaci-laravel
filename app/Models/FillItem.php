@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Translatable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,6 +10,8 @@ use Illuminate\Support\Facades\Storage;
 
 class FillItem extends Model
 {
+    use Translatable;
+
     /** The line drawings an item can be shown with (App\Support\Icons). */
     public const MODELS = [
         'kelle_qend' => 'Kəllə qənd',
@@ -61,7 +64,7 @@ class FillItem extends Model
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
+            'name' => $this->tr('name'),
             'price' => (float) $this->price,
             'model' => $this->model,
             'color' => $this->color,
@@ -70,7 +73,7 @@ class FillItem extends Model
             'max' => (int) $this->max_qty,
             'category' => $this->fill_category_id,
             'image' => $this->imageUrl(),
-            'description' => $this->description,
+            'description' => $this->tr('description'),
             'icon' => \App\Support\Icons::svg($this->model, 'size-6'),
         ];
     }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Translatable;
 use App\Support\Availability;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -11,6 +12,8 @@ use Illuminate\Support\Facades\Storage;
 
 class Xonca extends Model
 {
+    use Translatable;
+
     public const SHAPES = [
         'round' => 'Dairəvi',
         'oval' => 'Oval',
@@ -115,7 +118,7 @@ class Xonca extends Model
 
         return [
             'id' => $this->id,
-            'name' => $this->name,
+            'name' => $this->tr('name'),
             'slug' => $this->slug,
             'price' => (float) $this->price,
             'deposit' => (float) $this->deposit,

@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ReviewResource\Pages;
 use App\Models\Review;
+use App\Filament\Forms\Translations;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -31,6 +32,7 @@ class ReviewResource extends Resource
             Forms\Components\Textarea::make('text')->label('Rəy')->required()->rows(4)->columnSpanFull(),
             Forms\Components\TextInput::make('sort')->label('Sıra')->numeric()->default(0),
             Forms\Components\Toggle::make('is_active')->label('Saytda görünsün')->default(true),
+            Translations::make(['occasion' => 'Məclis', 'text' => ['Rəy', 'textarea']])->columnSpanFull()->collapsed(),
         ]);
     }
 

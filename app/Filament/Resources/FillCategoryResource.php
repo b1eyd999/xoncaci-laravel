@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\FillCategoryResource\Pages;
 use App\Models\FillCategory;
+use App\Filament\Forms\Translations;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -32,6 +33,7 @@ class FillCategoryResource extends Resource
                 ->afterStateUpdated(fn ($state, Forms\Set $set, ?FillCategory $record) => $record ? null : $set('slug', Str::slug($state))),
             Forms\Components\TextInput::make('slug')->required()->unique(ignoreRecord: true),
             Forms\Components\TextInput::make('sort')->label('Sıra')->numeric()->default(0),
+            Translations::make(['name' => 'Ad'])->columnSpanFull()->collapsed(),
         ]);
     }
 

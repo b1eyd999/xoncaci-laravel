@@ -45,13 +45,21 @@ class Settings extends Page implements HasForms
                     Forms\Components\TextInput::make('phone')->label('Telefon')->required(),
                     Forms\Components\TextInput::make('whatsapp')->label('WhatsApp nömrəsi')->helperText('Yalnız rəqəmlər, məsələn 994501234567'),
                     Forms\Components\TextInput::make('instagram')->label('Instagram')->prefix('@'),
-                    Forms\Components\TextInput::make('address')->label('Ünvan'),
-                    Forms\Components\TextInput::make('working_hours')->label('İş saatları'),
+                    Forms\Components\TextInput::make('address')->label('Ünvan (AZ)'),
+                    Forms\Components\TextInput::make('working_hours')->label('İş saatları (AZ)'),
+                    Forms\Components\TextInput::make('address_ru')->label('Ünvan (RU)'),
+                    Forms\Components\TextInput::make('working_hours_ru')->label('İş saatları (RU)'),
+                    Forms\Components\TextInput::make('address_en')->label('Ünvan (EN)'),
+                    Forms\Components\TextInput::make('working_hours_en')->label('İş saatları (EN)'),
                 ]),
                 Forms\Components\Tabs\Tab::make('Ana səhifə')->icon('heroicon-m-home')->schema([
-                    Forms\Components\TextInput::make('hero_title')->label('Böyük başlıq')
-                        ->helperText('«—» işarəsindən sonrakı hissə qızılı rəngdə göstərilir.'),
-                    Forms\Components\Textarea::make('hero_subtitle')->label('Alt mətn')->rows(3),
+                    Forms\Components\TextInput::make('hero_title')->label('Böyük başlıq (AZ)')
+                        ->helperText('«|» işarəsindən sonrakı hissə yeni sətirdə, qızılı rəngdə göstərilir. İşarənin özü saytda görünmür.'),
+                    Forms\Components\TextInput::make('hero_title_ru')->label('Böyük başlıq (RU)'),
+                    Forms\Components\TextInput::make('hero_title_en')->label('Böyük başlıq (EN)'),
+                    Forms\Components\Textarea::make('hero_subtitle')->label('Alt mətn (AZ)')->rows(3),
+                    Forms\Components\Textarea::make('hero_subtitle_ru')->label('Alt mətn (RU)')->rows(3),
+                    Forms\Components\Textarea::make('hero_subtitle_en')->label('Alt mətn (EN)')->rows(3),
                 ]),
                 Forms\Components\Tabs\Tab::make('Şəkillər')->icon('heroicon-m-photo')->columns(3)->schema([
                     Forms\Components\Placeholder::make('img_help')->hiddenLabel()->columnSpanFull()

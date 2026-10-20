@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\OccasionResource\Pages;
 use App\Models\Occasion;
+use App\Filament\Forms\Translations;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -38,6 +39,7 @@ class OccasionResource extends Resource
             Forms\Components\ColorPicker::make('accent')->label('Kartın rəngi')->required()->default('#8a1c2b'),
             Forms\Components\TextInput::make('sort')->label('Sıra')->numeric()->default(0),
             Forms\Components\Toggle::make('is_active')->label('Saytda görünsün')->default(true),
+            Translations::make(['name' => 'Ad', 'tagline' => 'Qısa şüar', 'description' => ['Təsvir', 'textarea']])->columnSpanFull()->collapsed(),
         ]);
     }
 

@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\FillItemResource\Pages;
 use App\Models\FillItem;
+use App\Filament\Forms\Translations;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -49,6 +50,7 @@ class FillItemResource extends Resource
                     ->helperText('Kvadrat şəkil — saytda dairəvi kiçik şəkil kimi göstərilir və rəsmi əvəz edir.'),
                 Forms\Components\Toggle::make('is_active')->label('Saytda görünsün')->default(true),
             ]),
+            Translations::make(['name' => 'Ad', 'description' => 'Qısa izah'])->columnSpanFull()->collapsed(),
         ]);
     }
 

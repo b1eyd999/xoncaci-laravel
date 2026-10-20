@@ -48,6 +48,27 @@ class BookingTest extends TestCase
         $this->get('/sebet')->assertOk();
     }
 
+    public function test_three_languages(): void
+    {
+        $x = Xonca::where('code', 'XN-001')->first();
+        $this->get('/?lang=ru')->assertOk()->assertSee('Золотой дворец')->assertSee('Коллекция')->assertCookie('lang', 'ru', false);
+        $this->get('/xonca/' . $x->slug . '?lang=en')->assertOk()->assertSee('Golden Palace')->assertSee('Ribbon colour');
+        $this->get('/xoncalar')->assertOk()->assertSee('Kolleksiya');
+        $this->withUnencryptedCookie('lang', 'ru')->get('/xoncalar')->assertOk()->assertSee('Коллекция');
+    }
+
+    public function test_no_dashes_on_the_site(): void
+    {
+        $x = Xonca::first();
+        foreach (['az', 'ru', 'en'] as $lang) {
+            foreach (['/', '/xoncalar', '/xonca/' . $x->slug, '/sebet'] as $url) {
+                $html = $this->get($url . '?lang=' . $lang)->assertOk()->getContent();
+                $text = preg_replace('/\s+/u', ' ', strip_tags(preg_replace('#<(script|style).*?</>#is', '', $html)));
+                $this->assertDoesNotMatchRegularExpression('/[—–]/u', $text, "dash on {$url} ({$lang})");
+            }
+        }
+    }
+
     public function test_prices_come_from_the_server_not_the_browser(): void
     {
         $x = Xonca::first();

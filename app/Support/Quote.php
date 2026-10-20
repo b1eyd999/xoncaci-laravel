@@ -40,7 +40,7 @@ class Quote
         foreach ($cart as $i => $row) {
             $xonca = $xoncas->get((int) ($row['xonca_id'] ?? 0));
             if (! $xonca) {
-                throw ValidationException::withMessages(['cart' => 'Səbətdəki xonçalardan biri artıq mövcud deyil. Səbəti yeniləyin.']);
+                throw ValidationException::withMessages(['cart' => __('Səbətdəki xonçalardan biri artıq mövcud deyil. Səbəti yeniləyin.')]);
             }
 
             $mode = $row['fill_mode'] ?? 'ours';

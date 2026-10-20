@@ -16,6 +16,8 @@
     },
     "dependencies": {
         "@google/model-viewer": "^4.4.0",
-        "qrcode": "^1.5.4"
+        "@sparkjsdev/spark": "^2.4.0",
+        "qrcode": "^1.5.4",
+        "three": "^0.186.1"
     }
 }

@@ -8,14 +8,58 @@
     "file": "assets/spin-CxFcjfy2.js",
     "name": "spin"
   },
+  "_three.module-LdZpiVow.js": {
+    "file": "assets/three.module-LdZpiVow.js",
+    "name": "three.module"
+  },
   "node_modules/@google/model-viewer/lib/model-viewer.js": {
-    "file": "assets/model-viewer-CgrEId82.js",
+    "file": "assets/model-viewer-BxVaYUIS.js",
     "name": "model-viewer",
     "src": "node_modules/@google/model-viewer/lib/model-viewer.js",
-    "isDynamicEntry": true
+    "isDynamicEntry": true,
+    "imports": [
+      "_three.module-LdZpiVow.js"
+    ],
+    "assets": [
+      "assets/draco_decoder-C32yEggz.wasm",
+      "assets/draco_wasm_wrapper-DxJM36Ib.js",
+      "assets/draco_decoder-fzg4nYZr.js",
+      "assets/draco_wasm_wrapper-fZCQGLGb.js",
+      "assets/draco_decoder-Z1_iN-Ht.wasm",
+      "assets/basis_transcoder-VXdx5NbI.wasm",
+      "assets/basis_transcoder-o4Hde_L7.js"
+    ]
+  },
+  "node_modules/three/examples/jsm/libs/basis/basis_transcoder.js": {
+    "file": "assets/basis_transcoder-o4Hde_L7.js",
+    "src": "node_modules/three/examples/jsm/libs/basis/basis_transcoder.js"
+  },
+  "node_modules/three/examples/jsm/libs/basis/basis_transcoder.wasm": {
+    "file": "assets/basis_transcoder-VXdx5NbI.wasm",
+    "src": "node_modules/three/examples/jsm/libs/basis/basis_transcoder.wasm"
+  },
+  "node_modules/three/examples/jsm/libs/draco/draco_decoder.js": {
+    "file": "assets/draco_decoder-fzg4nYZr.js",
+    "src": "node_modules/three/examples/jsm/libs/draco/draco_decoder.js"
+  },
+  "node_modules/three/examples/jsm/libs/draco/draco_decoder.wasm": {
+    "file": "assets/draco_decoder-C32yEggz.wasm",
+    "src": "node_modules/three/examples/jsm/libs/draco/draco_decoder.wasm"
+  },
+  "node_modules/three/examples/jsm/libs/draco/draco_wasm_wrapper.js": {
+    "file": "assets/draco_wasm_wrapper-DxJM36Ib.js",
+    "src": "node_modules/three/examples/jsm/libs/draco/draco_wasm_wrapper.js"
+  },
+  "node_modules/three/examples/jsm/libs/draco/gltf/draco_decoder.wasm": {
+    "file": "assets/draco_decoder-Z1_iN-Ht.wasm",
+    "src": "node_modules/three/examples/jsm/libs/draco/gltf/draco_decoder.wasm"
+  },
+  "node_modules/three/examples/jsm/libs/draco/gltf/draco_wasm_wrapper.js": {
+    "file": "assets/draco_wasm_wrapper-fZCQGLGb.js",
+    "src": "node_modules/three/examples/jsm/libs/draco/gltf/draco_wasm_wrapper.js"
   },
   "resources/css/app.css": {
-    "file": "assets/app-DTTh9Wki.css",
+    "file": "assets/app-orl_QprB.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -36,7 +80,7 @@
     ]
   },
   "resources/js/app.js": {
-    "file": "assets/app-lu9mxMDn.js",
+    "file": "assets/app-C1KMckfQ.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
@@ -46,6 +90,15 @@
     "dynamicImports": [
       "node_modules/@google/model-viewer/lib/model-viewer.js",
       "_browser-CqDbEFy1.js"
+    ]
+  },
+  "resources/js/splat-demo.js": {
+    "file": "assets/splat-demo-p4AbKQrQ.js",
+    "name": "splat-demo",
+    "src": "resources/js/splat-demo.js",
+    "isEntry": true,
+    "imports": [
+      "_three.module-LdZpiVow.js"
     ]
   }
 }

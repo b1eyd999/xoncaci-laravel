@@ -8,6 +8,8 @@ Route::get('/', [SiteController::class, 'home'])->name('home');
 Route::get('/xoncalar', [SiteController::class, 'catalog'])->name('catalog');
 Route::get('/xoncalar/{occasion:slug}', [SiteController::class, 'catalog'])->name('catalog.occasion');
 Route::get('/xonca/{xonca:slug}', [SiteController::class, 'show'])->name('xonca');
+// Not linked anywhere: a 3D capture from video, to show the owner the quality.
+Route::view('/3d-sinaq', 'site.splat-demo')->name('splat.demo');
 // Not linked anywhere: try «Evinizdə baxın» before any xonça has a scan.
 Route::get('/ar-sinaq', fn () => \App\Models\Setting::get('ar_enabled') === '1' ? view('site.ar-demo') : abort(404))->name('ar.demo');
 Route::get('/movcudluq', [SiteController::class, 'availability'])->name('availability');

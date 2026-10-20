@@ -26,7 +26,7 @@ class Setting extends Model
         'whatsapp' => '994500000000',
         'instagram' => 'xoncaci.az',
         'address' => 'Bakı şəhəri',
-        'working_hours' => 'Hər gün 09:00-dan 21:00-dək',
+        'working_hours' => 'Hər gün saat 9:00 ilə 21:00 arası',
         'hero_title' => 'Ən xoş gününüz üçün | zərif xonçalar',
         'hero_title_ru' => 'Для самого счастливого дня | изысканные хончи',
         'hero_title_en' => 'For your happiest day | exquisite khonchas',

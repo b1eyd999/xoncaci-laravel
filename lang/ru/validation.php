@@ -3,7 +3,7 @@
 return [
     'required' => 'Поле «:attribute» обязательно.',
     'required_if' => 'Поле «:attribute» обязательно.',
-    'email' => 'Поле «:attribute» должно быть e-mail адресом.',
+    'email' => 'Поле «:attribute» должно быть адресом почты.',
     'date' => 'Поле «:attribute» должно быть датой.',
     'after_or_equal' => 'Поле «:attribute» должно быть не раньше :date.',
     'max' => ['string' => 'Поле «:attribute» не длиннее :max символов.', 'numeric' => 'Поле «:attribute» не больше :max.'],
@@ -16,7 +16,7 @@ return [
     'regex' => 'Поле «:attribute» заполнено неверно.',
 
     'attributes' => [
-        'customer_name' => 'Имя', 'phone' => 'Телефон', 'email' => 'E-mail', 'event_date' => 'Дата', 'event_time' => 'Время',
+        'customer_name' => 'Имя', 'phone' => 'Телефон', 'email' => 'Почта', 'event_date' => 'Дата', 'event_time' => 'Время',
         'occasion_id' => 'Торжество', 'delivery_type' => 'Доставка', 'district' => 'Район', 'address' => 'Адрес', 'note' => 'Комментарий',
     ],
 ];

@@ -1,5 +1,5 @@
 {{-- A hidden page for trying «Evinizdə baxın» before any xonça has a scan of its own.
-     The object is an open sample model (Khronos glTF sample «Lantern», CC0). --}}
+     The object is an open sample model (Khronos glTF sample «Lantern», CC0), baked to 27 × 45 cm with tools/fit-model.mjs. --}}
 @php
     $copy = [
         'az' => ['Evinizdə baxın', 'necə işləyir', 'Bu səhifə sınaq üçündür. Burada nümunə 3D obyekt (fənər) var. Xonçalarınızın 3D skanı yükləndikdən sonra eyni düymə hər xonçanın səhifəsində olacaq və telefonda xonçanın özü görünəcək.',
@@ -44,9 +44,9 @@
     </section>
 
     @include('site.partials.ar-modal', [
-        'glb' => 'https://cdn.jsdelivr.net/gh/KhronosGroup/glTF-Sample-Assets@main/Models/Lantern/glTF-Binary/Lantern.glb',
+        'glb' => asset('models/demo-lantern.glb'),
         'usdz' => null,
-        'size' => 40,
+        'size' => 27,
         'name' => ['az' => 'Fənər', 'ru' => 'Фонарь', 'en' => 'The lantern'][app()->getLocale()],
         'url' => route('ar.demo') . '?ar=1&lang=' . app()->getLocale(),
     ])

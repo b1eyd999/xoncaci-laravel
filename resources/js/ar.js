@@ -29,7 +29,10 @@ export function initAr() {
             src: modal.dataset.glb,
             alt: `${modal.dataset.name} 3D`,
             ar: '',
-            'ar-modes': 'webxr scene-viewer quick-look',
+            // Scene Viewer first on Android: Google's own AR finds the floor or
+            // table and pins the object to it. WebXR inside the page left it
+            // floating in front of the camera on the owner's phone.
+            'ar-modes': 'scene-viewer webxr quick-look',
             'ar-scale': 'fixed',
             'ar-placement': 'floor',
             'camera-controls': '',
@@ -54,7 +57,10 @@ export function initAr() {
             const d = viewer.getDimensions();
             const real = (Number(modal.dataset.size) || 60) / 100;
             const across = Math.max(d.x, d.z);
-            if (across > 0) {
+            // Scene Viewer and Quick Look read the size from the file, not from
+            // here, so a model should already be at real size (tools/fit-model.mjs).
+            // Only a clearly wrong scan is corrected in the page.
+            if (across > 0 && Math.abs(real / across - 1) > 0.05) {
                 const k = real / across;
                 viewer.scale = `${k} ${k} ${k}`;
                 viewer.updateFraming();

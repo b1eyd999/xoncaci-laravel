@@ -47,7 +47,7 @@
         'glb' => 'https://cdn.jsdelivr.net/gh/KhronosGroup/glTF-Sample-Assets@main/Models/Lantern/glTF-Binary/Lantern.glb',
         'usdz' => null,
         'size' => 40,
-        'name' => $title,
+        'name' => ['az' => 'Fənər', 'ru' => 'Фонарь', 'en' => 'The lantern'][app()->getLocale()],
         'url' => route('ar.demo') . '?ar=1&lang=' . app()->getLocale(),
     ])
 @endsection

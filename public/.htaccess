@@ -5,6 +5,16 @@
 
     RewriteEngine On
 
+    # One address only: https://xoncaci.az (no www, no http). Certificate
+    # checks under /.well-known are left alone so AutoSSL can renew.
+    RewriteCond %{REQUEST_URI} !^/\.well-known/
+    RewriteCond %{HTTP_HOST} ^www\.xoncaci\.az$ [NC]
+    RewriteRule ^ https://xoncaci.az%{REQUEST_URI} [L,R=301]
+    RewriteCond %{REQUEST_URI} !^/\.well-known/
+    RewriteCond %{HTTP_HOST} ^xoncaci\.az$ [NC]
+    RewriteCond %{HTTPS} off
+    RewriteRule ^ https://xoncaci.az%{REQUEST_URI} [L,R=301]
+
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]

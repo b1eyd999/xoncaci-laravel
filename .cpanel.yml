@@ -24,3 +24,8 @@ deployment:
     - cd $APPPATH && $PHPBIN artisan migrate --force >> $APPPATH/storage/logs/deploy.log 2>&1
     - cd $APPPATH && $PHPBIN artisan xonca:install >> $APPPATH/storage/logs/deploy.log 2>&1
     - cd $APPPATH && $PHPBIN artisan cache:clear >> $APPPATH/storage/logs/deploy.log 2>&1
+    # Compiled config, views and Filament's components: pages answer far
+    # sooner. Runs after xonca:install, which still reads .env directly.
+    - cd $APPPATH && $PHPBIN artisan config:cache >> $APPPATH/storage/logs/deploy.log 2>&1
+    - cd $APPPATH && $PHPBIN artisan view:cache >> $APPPATH/storage/logs/deploy.log 2>&1
+    - cd $APPPATH && $PHPBIN artisan filament:optimize >> $APPPATH/storage/logs/deploy.log 2>&1

@@ -93,6 +93,19 @@ class XoncaResource extends Resource
                         ->columns(4)->addActionLabel('Əşya əlavə et')->reorderable(false)->defaultItems(0),
                 ]),
 
+                Forms\Components\Tabs\Tab::make('360° foto')->icon('heroicon-m-arrow-path')->schema([
+                    Forms\Components\Placeholder::make('spin_help')->hiddenLabel()->content(new \Illuminate\Support\HtmlString(
+                        '<div class="space-y-2 text-sm leading-relaxed">'
+                        . '<p><b>Müştəri xonçanı barmağı ilə fırladıb hər tərəfdən real foto kimi görür.</b></p>'
+                        . '<p>1) Xonçanı fırlanan altlığa qoyun, arxa fon sadə olsun, işıq bərabər düşsün. '
+                        . '2) Telefonu ştativə və ya sabit yerə qoyun, xonçanın bir yerindən başlayıb <b>tam bir dövrə</b> videoya çəkin (15 ilə 30 saniyə). '
+                        . '3) Videonu aşağıda seçin, başlanğıc və son kadrı eyni göstərən yeri seçin, «Kadrları hazırla» basın, fırladıb yoxlayın və «Saytda yadda saxla» basın.</p>'
+                        . '<p>Ayrıca çəkilmiş 24 ilə 72 şəkli də seçə bilərsiniz, adlarına görə sıralanır.</p></div>'
+                    )),
+                    Forms\Components\Placeholder::make('spin_maker')->hiddenLabel()->content(fn (?Xonca $record) => $record
+                        ? new \Illuminate\Support\HtmlString('<div wire:ignore><xonca-spin-maker data-url="' . e(route('admin.spin.store', $record->id)) . '" data-existing="' . e(json_encode($record->spinUrls())) . '"></xonca-spin-maker></div>')
+                        : 'Əvvəlcə xonçanı yadda saxlayın, sonra 360° əlavə edin.'),
+                ]),
                 Forms\Components\Tabs\Tab::make('3D və AR')->icon('heroicon-m-cube-transparent')->schema([
                     Forms\Components\Placeholder::make('ar_help')->hiddenLabel()->content(new \Illuminate\Support\HtmlString(
                         '<div class="space-y-2 text-sm leading-relaxed">'

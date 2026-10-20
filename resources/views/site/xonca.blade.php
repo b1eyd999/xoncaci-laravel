@@ -6,6 +6,7 @@
     $ours = $xonca->defaultFills->filter(fn ($f) => $f->item && $f->item->is_active);
     $oursTotal = $ours->sum(fn ($f) => $f->item->price * $f->qty);
     $name = $xonca->tr('name');
+    $spin = $xonca->spinUrls();
 @endphp
 
 @push('head')
@@ -33,11 +34,18 @@
             {{-- GALLERY --}}
             <div class="lg:sticky lg:top-32 lg:self-start">
                 <div class="relative -mx-5 aspect-[4/5] overflow-hidden bg-sand sm:mx-0">
+                    @if ($spin)
+                        {{-- Real photographs of one full turn: drag to turn the xonça. --}}
+                        <div data-gallery-slide="spin" data-spin='@json($spin)' class="absolute inset-0 transition-opacity duration-700">
+                            <span class="caps pointer-events-none absolute top-4 left-4 z-10 bg-onyx/75 px-3 py-1.5 !text-[9px] text-gold-soft backdrop-blur">360°</span>
+                            <span data-spin-hint class="caps pointer-events-none absolute inset-x-0 bottom-5 z-10 text-center !text-[9px] text-onyx/60 transition-opacity duration-700">{{ __('Barmaqla fırladın') }}</span>
+                        </div>
+                    @endif
                     @if ($photos)
                         @foreach ($photos as $p)
-                            <img src="{{ Img::url($p, 1400) }}" alt="{{ $name }}" data-gallery-slide="{{ $loop->index }}" class="absolute inset-0 size-full object-cover transition-opacity duration-700 {{ $loop->first ? '' : 'opacity-0' }}">
+                            <img src="{{ Img::url($p, 1400) }}" alt="{{ $name }}" data-gallery-slide="{{ $loop->index }}" class="absolute inset-0 size-full object-cover transition-opacity duration-700 {{ $loop->first && ! $spin ? '' : 'opacity-0' }}">
                         @endforeach
-                    @else
+                    @elseif (! $spin)
                         <x-tray-art :xonca="$xonca" />
                     @endif
                 </div>
@@ -53,8 +61,11 @@
                         <span class="caps !text-[10px] text-gold-soft transition group-hover:translate-x-1">3D AR</span>
                     </button>
                 @endif
-                @if (count($photos) > 1)
+                @if (count($photos) > ($spin ? 0 : 1))
                     <div class="mt-3 grid grid-cols-5 gap-3">
+                        @if ($spin)
+                            <button type="button" data-gallery-thumb="spin" class="caps grid aspect-square place-items-center bg-onyx !text-[10px] text-gold-soft opacity-50 transition hover:opacity-100 data-[on]:opacity-100">360°</button>
+                        @endif
                         @foreach ($photos as $p)
                             <button type="button" data-gallery-thumb="{{ $loop->index }}" class="aspect-square overflow-hidden opacity-50 transition hover:opacity-100 data-[on]:opacity-100">
                                 <img src="{{ Img::url($p, 300) }}" alt="" class="size-full object-cover">

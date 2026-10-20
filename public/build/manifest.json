@@ -4,6 +4,10 @@
     "name": "browser",
     "isDynamicEntry": true
   },
+  "_spin-CxFcjfy2.js": {
+    "file": "assets/spin-CxFcjfy2.js",
+    "name": "spin"
+  },
   "node_modules/@google/model-viewer/lib/model-viewer.js": {
     "file": "assets/model-viewer-CgrEId82.js",
     "name": "model-viewer",
@@ -11,7 +15,7 @@
     "isDynamicEntry": true
   },
   "resources/css/app.css": {
-    "file": "assets/app-gnGHyNmA.css",
+    "file": "assets/app-DTTh9Wki.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -20,19 +24,25 @@
     ]
   },
   "resources/js/admin.js": {
-    "file": "assets/admin-Cyl_rRMp.js",
+    "file": "assets/admin-B8_LGCjj.js",
     "name": "admin",
     "src": "resources/js/admin.js",
     "isEntry": true,
+    "imports": [
+      "_spin-CxFcjfy2.js"
+    ],
     "css": [
       "assets/admin-BjRF3u_V.css"
     ]
   },
   "resources/js/app.js": {
-    "file": "assets/app-BX6Zc39s.js",
+    "file": "assets/app-lu9mxMDn.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
+    "imports": [
+      "_spin-CxFcjfy2.js"
+    ],
     "dynamicImports": [
       "node_modules/@google/model-viewer/lib/model-viewer.js",
       "_browser-CqDbEFy1.js"

@@ -41,6 +41,7 @@ class Xonca extends Model
 
     protected $casts = [
         'images' => 'array',
+        'spin' => 'array',
         'ribbon_choices' => 'array',
         'is_featured' => 'boolean',
         'is_active' => 'boolean',
@@ -79,6 +80,12 @@ class Xonca extends Model
     public function imageUrls(): array
     {
         return collect($this->images ?? [])->map(fn ($p) => Storage::disk('public')->url($p))->values()->all();
+    }
+
+    /** @return list<string> the 360° frames, in turning order */
+    public function spinUrls(): array
+    {
+        return collect($this->spin ?? [])->map(fn ($p) => Storage::disk('public')->url($p))->values()->all();
     }
 
     public function hasAr(): bool

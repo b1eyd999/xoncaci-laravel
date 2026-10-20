@@ -20,3 +20,9 @@ Route::get('/sifaris/{booking:code}', [CartController::class, 'done'])->name('bo
 // A sheet for the courier: who, where, when, what goes and what comes back.
 Route::get('/admin/bookings/{booking:code}/print', fn (App\Models\Booking $booking) => view('admin.print', ['booking' => $booking->load('items', 'occasion')]))
     ->middleware('auth')->name('admin.booking.print');
+
+// The 360° view: frames cut from the owner's turntable video in the admin.
+Route::middleware('auth')->group(function () {
+    Route::post('/admin/xonca-spin/{xonca:id}', [App\Http\Controllers\SpinController::class, 'store'])->name('admin.spin.store');
+    Route::delete('/admin/xonca-spin/{xonca:id}', [App\Http\Controllers\SpinController::class, 'destroy'])->name('admin.spin.destroy');
+});

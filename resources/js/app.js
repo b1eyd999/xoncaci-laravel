@@ -2,6 +2,7 @@ import { cart } from './cart.js';
 import { initBuilder } from './builder.js';
 import { initCartPage } from './cart-page.js';
 import { initAr } from './ar.js';
+import { createSpin } from './spin.js';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -73,3 +74,9 @@ cart.renderCount();
 initBuilder();
 initCartPage();
 initAr();
+
+// 360° views: the hint fades once the xonça has been turned by hand.
+$$('[data-spin]').forEach((el) => {
+    createSpin(el, JSON.parse(el.dataset.spin));
+    el.addEventListener('pointerdown', () => $('[data-spin-hint]', el)?.classList.add('opacity-0'), { once: true });
+});

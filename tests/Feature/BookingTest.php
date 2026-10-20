@@ -69,6 +69,26 @@ class BookingTest extends TestCase
         }
     }
 
+    public function test_owner_uploads_a_360_view_in_batches(): void
+    {
+        \Illuminate\Support\Facades\Storage::fake('public');
+        $x = Xonca::first();
+        $this->actingAs(\App\Models\User::first());
+        $frame = fn ($i) => \Illuminate\Http\UploadedFile::fake()->image("{$i}.jpg", 40, 50);
+        for ($i = 0; $i < 12; $i += 4) {
+            $this->post("/admin/xonca-spin/{$x->id}", [
+                'token' => 'abcdefgh12', 'start' => $i,
+                'frames' => [$frame($i), $frame($i + 1), $frame($i + 2), $frame($i + 3)],
+                'finish' => $i === 8 ? '1' : null,
+            ], ['Accept' => 'application/json'])->assertOk();
+        }
+        $this->assertCount(12, $x->fresh()->spin);
+        $this->get('/xonca/' . $x->slug)->assertOk()->assertSee('data-spin', false)->assertSee('360°');
+
+        auth()->logout();
+        $this->post("/admin/xonca-spin/{$x->id}", ['token' => 'zzzzzzzz12', 'start' => 0], ['Accept' => 'application/json'])->assertUnauthorized();
+    }
+
     public function test_prices_come_from_the_server_not_the_browser(): void
     {
         $x = Xonca::first();

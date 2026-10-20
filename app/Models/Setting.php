@@ -40,6 +40,8 @@ class Setting extends Model
         'hero_image' => '',
         'craft_image' => '',
         'cta_image' => '',
+        // «Evinizdə baxın» stays hidden until the scans look real enough to show.
+        'ar_enabled' => '0',
         'delivery_fee' => '15',
         'free_delivery_from' => '300',
         'days_before' => '1',

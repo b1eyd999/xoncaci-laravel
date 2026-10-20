@@ -83,7 +83,7 @@ class Xonca extends Model
 
     public function hasAr(): bool
     {
-        return filled($this->model_glb);
+        return filled($this->model_glb) && Setting::get('ar_enabled') === '1';
     }
 
     public function glbUrl(): ?string

@@ -64,6 +64,8 @@ class Settings extends Page implements HasForms
                 Forms\Components\Tabs\Tab::make('Şəkillər')->icon('heroicon-m-photo')->columns(3)->schema([
                     Forms\Components\Placeholder::make('img_help')->hiddenLabel()->columnSpanFull()
                         ->content('Boş qalan yerdə pulsuz Unsplash fotosu göstərilir. Öz fotolarınızı yükləyin — geniş, yüksək keyfiyyətli, tünd tonlu şəkillər ən lüks görünür.'),
+                    Forms\Components\Select::make('ar_enabled')->label('«Evinizdə baxın» (3D, kamera)')->options(['0' => 'Gizli', '1' => 'Saytda göstər'])->required()->columnSpanFull()
+                        ->helperText('Xonçaların 3D skanları kifayət qədər real görünəndə açın.'),
                     Forms\Components\FileUpload::make('hero_image')->label('Ana ekran (böyük foto)')->image()->directory('site')->imageResizeTargetWidth(2600)->maxSize(12288),
                     Forms\Components\FileUpload::make('craft_image')->label('«Necə işləyir» bölməsi')->image()->directory('site')->imageResizeTargetWidth(2000)->maxSize(12288),
                     Forms\Components\FileUpload::make('cta_image')->label('Aşağıdakı çağırış bölməsi')->image()->directory('site')->imageResizeTargetWidth(2600)->maxSize(12288),

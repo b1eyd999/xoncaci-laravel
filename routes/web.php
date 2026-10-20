@@ -9,7 +9,7 @@ Route::get('/xoncalar', [SiteController::class, 'catalog'])->name('catalog');
 Route::get('/xoncalar/{occasion:slug}', [SiteController::class, 'catalog'])->name('catalog.occasion');
 Route::get('/xonca/{xonca:slug}', [SiteController::class, 'show'])->name('xonca');
 // Not linked anywhere: try «Evinizdə baxın» before any xonça has a scan.
-Route::view('/ar-sinaq', 'site.ar-demo')->name('ar.demo');
+Route::get('/ar-sinaq', fn () => \App\Models\Setting::get('ar_enabled') === '1' ? view('site.ar-demo') : abort(404))->name('ar.demo');
 Route::get('/movcudluq', [SiteController::class, 'availability'])->name('availability');
 
 Route::get('/sebet', [CartController::class, 'page'])->name('cart');

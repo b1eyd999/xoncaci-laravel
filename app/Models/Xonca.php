@@ -88,6 +88,16 @@ class Xonca extends Model
         return collect($this->spin ?? [])->map(fn ($p) => Storage::disk('public')->url($p))->values()->all();
     }
 
+    public function videoUrl(): ?string
+    {
+        return $this->video ? Storage::disk('public')->url($this->video) : null;
+    }
+
+    public function videoPosterUrl(): ?string
+    {
+        return $this->video_poster ? Storage::disk('public')->url($this->video_poster) : null;
+    }
+
     public function hasAr(): bool
     {
         return filled($this->model_glb) && Setting::get('ar_enabled') === '1';

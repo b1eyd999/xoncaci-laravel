@@ -89,6 +89,44 @@ class BookingTest extends TestCase
         $this->post("/admin/xonca-spin/{$x->id}", ['token' => 'zzzzzzzz12', 'start' => 0], ['Accept' => 'application/json'])->assertUnauthorized();
     }
 
+    public function test_owner_uploads_a_video_in_pieces(): void
+    {
+        \Illuminate\Support\Facades\Storage::fake('public');
+        \Illuminate\Support\Facades\Storage::fake('local');
+        $x = Xonca::first();
+        $this->actingAs(\App\Models\User::first());
+        $film = "\0\0\0\x18ftypmp42" . str_repeat('x', 3000);
+        $piece = fn ($from, $len) => \Illuminate\Http\UploadedFile::fake()->createWithContent('part.bin', substr($film, $from, $len));
+        $poster = fn () => \Illuminate\Http\UploadedFile::fake()->image('p.jpg', 40, 50);
+        $url = "/admin/xonca-video/{$x->id}";
+        $json = ['Accept' => 'application/json'];
+
+        $this->post($url, ['token' => 'abcdefgh12', 'offset' => 0, 'chunk' => $piece(0, 1000)], $json)->assertOk();
+        // The same piece sent twice (a retry) is not written twice; a gap is refused.
+        $this->post($url, ['token' => 'abcdefgh12', 'offset' => 0, 'chunk' => $piece(0, 1000)], $json)->assertOk();
+        $this->post($url, ['token' => 'abcdefgh12', 'offset' => 2000, 'chunk' => $piece(2000, 1000)], $json)->assertStatus(409);
+        $this->post($url, ['token' => 'abcdefgh12', 'offset' => 1000, 'chunk' => $piece(1000, 1000)], $json)->assertOk();
+        $this->post($url, ['token' => 'abcdefgh12', 'offset' => 2000, 'chunk' => $piece(2000, 2000), 'finish' => '1', 'poster' => $poster()], $json)->assertOk();
+
+        $x->refresh();
+        $this->assertSame("video/{$x->id}/abcdefgh12.mp4", $x->video);
+        $this->assertSame($film, \Illuminate\Support\Facades\Storage::disk('public')->get($x->video));
+        $this->get('/xonca/' . $x->slug)->assertOk()->assertSee('data-gallery-slide="video"', false)->assertSee($x->videoUrl(), false);
+
+        // Something that is not a video is thrown away and the old film stays.
+        $this->post($url, [
+            'token' => 'zzzzzzzz12', 'offset' => 0, 'finish' => '1', 'poster' => $poster(),
+            'chunk' => \Illuminate\Http\UploadedFile::fake()->createWithContent('part.bin', '<?php echo 1;'),
+        ], $json)->assertStatus(422);
+        $this->assertSame("video/{$x->id}/abcdefgh12.mp4", $x->fresh()->video);
+
+        $this->delete($url, [], $json)->assertOk();
+        $this->assertNull($x->fresh()->video);
+
+        auth()->logout();
+        $this->post($url, ['token' => 'abcdefgh12', 'offset' => 0], $json)->assertUnauthorized();
+    }
+
     public function test_prices_come_from_the_server_not_the_browser(): void
     {
         $x = Xonca::first();

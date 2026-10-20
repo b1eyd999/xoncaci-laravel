@@ -93,6 +93,19 @@ class XoncaResource extends Resource
                         ->columns(4)->addActionLabel('Əşya əlavə et')->reorderable(false)->defaultItems(0),
                 ]),
 
+                Forms\Components\Tabs\Tab::make('Video')->icon('heroicon-m-film')->schema([
+                    Forms\Components\Placeholder::make('video_help')->hiddenLabel()->content(new \Illuminate\Support\HtmlString(
+                        '<div class="space-y-2 text-sm leading-relaxed">'
+                        . '<p><b>Video xonçanın səhifəsində ilk göstərilir: səssiz, təkrarlanaraq özü oynayır.</b></p>'
+                        . '<p>1) Telefonu şaquli tutun, xonçanı yaxşı işıqda 10 ilə 30 saniyə çəkin: yavaş yaxınlaşma, ətrafında yarım dövrə, detallar. '
+                        . '2) iPhone: Parametrlər, Kamera, Formatlar bölməsində <b>«Ən uyğun» (Most Compatible)</b> seçin, yoxsa video bəzi telefonlarda açılmaya bilər. 1080p kifayətdir. '
+                        . '3) Videonu aşağıda seçin, üz qabığı üçün kadr seçin və «Saytda yadda saxla» basın.</p>'
+                        . '<p>300 MB-a qədər. Kiçik fayl (20 ilə 60 MB) müştərinin telefonunda daha tez açılır.</p></div>'
+                    )),
+                    Forms\Components\Placeholder::make('video_maker')->hiddenLabel()->content(fn (?Xonca $record) => $record
+                        ? new \Illuminate\Support\HtmlString('<div wire:ignore><xonca-video-maker data-url="' . e(route('admin.video.store', $record->id)) . '" data-existing="' . e($record->videoUrl()) . '" data-poster="' . e($record->videoPosterUrl()) . '"></xonca-video-maker></div>')
+                        : 'Əvvəlcə xonçanı yadda saxlayın, sonra video əlavə edin.'),
+                ]),
                 Forms\Components\Tabs\Tab::make('360° foto')->icon('heroicon-m-arrow-path')->schema([
                     Forms\Components\Placeholder::make('spin_help')->hiddenLabel()->content(new \Illuminate\Support\HtmlString(
                         '<div class="space-y-2 text-sm leading-relaxed">'

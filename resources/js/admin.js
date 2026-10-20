@@ -2,3 +2,4 @@
 import '../css/admin.css';
 
 import './admin-spin.js';
+import './admin-video.js';

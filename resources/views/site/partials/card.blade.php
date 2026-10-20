@@ -6,6 +6,9 @@
             @if (isset($photos[1]))
                 <img src="{{ \App\Support\Img::url($photos[1], 900) }}" alt="" loading="lazy" class="absolute inset-0 size-full object-cover opacity-0 transition-opacity duration-700 group-hover:opacity-100">
             @endif
+        @elseif ($xonca->video_poster)
+            <img src="{{ $xonca->videoPosterUrl() }}" alt="{{ $xonca->tr('name') }}" loading="lazy" class="absolute inset-0 size-full object-cover">
+            <span class="caps absolute top-4 right-4 bg-onyx/75 px-3 py-1.5 !text-[9px] text-gold-soft backdrop-blur">{{ __('Video') }}</span>
         @elseif ($xonca->spin)
             <img src="{{ $xonca->spinUrls()[0] }}" alt="{{ $xonca->tr('name') }}" loading="lazy" class="absolute inset-0 size-full object-cover">
             <span class="caps absolute top-4 right-4 bg-onyx/75 px-3 py-1.5 !text-[9px] text-gold-soft backdrop-blur">360°</span>

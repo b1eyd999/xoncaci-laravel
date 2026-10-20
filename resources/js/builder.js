@@ -37,7 +37,7 @@ export function initBuilder() {
     const fillTotal = () => currentFill().reduce((s, f) => s + (items[f.id]?.price || 0) * f.qty, 0);
     const xoncaPrice = () => (state.mode === 'empty' ? Math.max(0, xonca.price - xonca.emptyDiscount) : xonca.price);
 
-    /* ---------- gallery (the 360° view, when there is one, is the first slide) */
+    /* ---------- gallery (video first, then the 360° view, then photos) */
     $$('[data-gallery-thumb]', root).forEach((t, i, all) => {
         t.toggleAttribute('data-on', i === 0);
         t.addEventListener('click', () => {
@@ -46,6 +46,7 @@ export function initBuilder() {
                 const off = s.dataset.gallerySlide !== t.dataset.galleryThumb;
                 s.classList.toggle('opacity-0', off);
                 s.classList.toggle('pointer-events-none', off);
+                if (s.tagName === 'VIDEO') off ? s.pause() : s.play().catch(() => {});
             });
         });
     });
